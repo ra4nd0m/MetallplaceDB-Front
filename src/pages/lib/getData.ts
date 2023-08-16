@@ -22,7 +22,7 @@ export async function getMaterials(token: string) {
 }
 
 export async function getMatProps(token: string, material_id: number) {
-    let ret_value: matProps | string;
+    let ret_value: matProps[] | string;
     let payload = { material_source_id: material_id }
     await fetch('http://localhost:3030/getPropertyList', {
         method: 'POST',
@@ -36,7 +36,7 @@ export async function getMatProps(token: string, material_id: number) {
             return res.json();
         })
         .then((data)=>{
-            ret_value=data;
+            ret_value=data.list;
         })
         .catch((err)=>{
             ret_value='';
