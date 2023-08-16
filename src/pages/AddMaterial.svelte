@@ -35,48 +35,50 @@
     }
 </script>
 
-<form on:submit|preventDefault={addMaterial}>
-    <div class="ms-3 mt-3">
-        <input
-            type="text"
-            class="form-text"
-            placeholder="Наименование"
-            bind:value={name}
-        />
-    </div>
-    <div class="ms-3 mt-3">
-        <input
-            type="text"
-            class="form-text"
-            placeholder="Источник"
-            bind:value={source}
-        />
-    </div>
-    <div class="ms-3 mt-3">
-        <input
-            type="text"
-            class="form-text"
-            placeholder="Страна"
-            bind:value={market}
-        />
-    </div>
-    <div class="ms-3 mt-3">
-        <input
-            type="text"
-            class="form-text"
-            placeholder="Усл поставки"
-            bind:value={delivery_type}
-        />
-    </div>
-    <div class="ms-3 mt-3">
-        <input
-            type="text"
-            class="form-text"
-            placeholder="Еденица измерения"
-            bind:value={unit}
-        />
-    </div>
-    <div class="ms-3 mt-3">
-        <button type="submit" class="btn btn-primary">Добавить</button>
-    </div>
-</form>
+<div class="d-flex flex-column w-25 ">
+    <form on:submit|preventDefault={addMaterial}>
+        <div class="ms-3 mt-3">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Наименование"
+                bind:value={name}
+            />
+        </div>
+        <div class="ms-3 mt-3">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Источник"
+                bind:value={source}
+            />
+        </div>
+        <div class="ms-3 mt-3">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Страна"
+                bind:value={market}
+            />
+        </div>
+        <div class="ms-3 mt-3">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Усл поставки"
+                bind:value={delivery_type}
+            />
+        </div>
+        <div class="ms-3 mt-3">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Еденица измерения"
+                bind:value={unit}
+            />
+        </div>
+        <div class="ms-3 mt-3">
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+    </form>
+</div>
