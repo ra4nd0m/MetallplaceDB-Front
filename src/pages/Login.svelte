@@ -1,6 +1,6 @@
 <script>
     import { push } from "svelte-spa-router";
-    import { token, user_login } from "../lib/stores";
+    import { token, user_login } from "./lib/stores";
     let login;
     let pass;
     function getToken() {

@@ -1,6 +1,6 @@
 <script>
     import { push } from "svelte-spa-router";
-    import { token } from "../lib/stores";
+    import { token } from "./lib/stores";
     import { onDestroy } from "svelte";
 
     let key;

@@ -1,7 +1,7 @@
 <script lang="ts">
   import Router from "svelte-spa-router";
   import Login from "./pages/Login.svelte";
-  import { token } from "./lib/stores";
+  import { token } from "./pages/lib/stores";
   import AddMaterial from "./pages/AddMaterial.svelte";
   import Home from "./pages/Home.svelte";
   import Logout from "./pages/Logout.svelte";
