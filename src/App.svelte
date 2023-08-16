@@ -1,25 +1,22 @@
 <script lang="ts">
-  import Router from "svelte-spa-router";
+  import Router, { push } from "svelte-spa-router";
   import Login from "./pages/Login.svelte";
   import { token } from "./pages/lib/stores";
   import AddMaterial from "./pages/AddMaterial.svelte";
   import Home from "./pages/Home.svelte";
   import Logout from "./pages/Logout.svelte";
-  import GetMaterialsList from "./pages/components/GetMaterialsList.svelte";
-
+  import MaterialList from "./pages/components/MaterialList.svelte";
   let secret;
   token.subscribe((val) => {
     localStorage.setItem("token", val);
     secret = val;
   });
-
-  let list;
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light p-2">
   <ul class="navbar-nav me-auto">
     <li class="nav-item">
-      <a class="nav-link" href="#/">Home</a>
+      <a class="nav-link" href="#/">Материалы</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="/#/addMaterial">Добавить материал</a>
@@ -46,7 +43,8 @@
     }}
   />
 
-  <p>Your token is: {secret}</p>
 
-  <GetMaterialsList key={secret}/>
 </main>
+<footer>
+  <p>Your token is: {secret}</p>
+</footer>

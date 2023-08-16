@@ -1,5 +1,5 @@
 export async function getMaterials(token: string) {
-    let ret_value: any;
+    let ret_value: materials|string;
     await fetch('http://localhost:3030/getMaterialList', {
         method: 'POST',
         headers: { Authorization: token, "Content-Type": "application/json" },
@@ -12,10 +12,21 @@ export async function getMaterials(token: string) {
             return res.json();
         })
         .then((data) => {
-            ret_value = data;
+            ret_value = data.list;
         })
-        .catch((err) => alert(err));
+        .catch((err) => {
+            ret_value = '';
+            alert(err);
+        });
     return ret_value;
 }
-    export let key = "";
-    export let material_list = {};
+
+export interface materials {
+    Id: number;
+    Name: string;
+    Source: string;
+    Group: string;
+    Market: string;
+    DeliveryType: string;
+    Unit: string;
+}
