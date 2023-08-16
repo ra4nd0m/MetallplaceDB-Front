@@ -6,6 +6,7 @@
   import Home from "./pages/Home.svelte";
   import Logout from "./pages/Logout.svelte";
   import Navbar from "./pages/components/Navbar.svelte";
+ 
   let secret;
   token.subscribe((val) => {
     localStorage.setItem("token", val);
@@ -13,8 +14,7 @@
   });
 </script>
 
-
-<Navbar key={secret}/>
+<Navbar key={secret} />
 <main class="p-3">
   <Router
     routes={{
@@ -24,7 +24,6 @@
       "/logout": Logout,
     }}
   />
-
 
 </main>
 <footer>
