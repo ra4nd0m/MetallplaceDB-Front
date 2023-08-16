@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import { getMatProps, type matProps } from "../lib/getData";
     import { token } from "../lib/stores";
+    import { push } from "svelte-spa-router";
     let material_props_list: string | matProps[];
     let secret: string;
     export let mat_id: number;
@@ -32,6 +33,7 @@
             {/each}
         </tbody>
     </table>
+    <button on:click={(()=>push(`/props/${mat_id}`))}   class="btn btn-secondary">Добавить свойство</button>
 {/if}
 
 <style>

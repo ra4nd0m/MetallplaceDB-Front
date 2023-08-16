@@ -6,6 +6,7 @@
   import Home from "./pages/Home.svelte";
   import Logout from "./pages/Logout.svelte";
   import Navbar from "./pages/components/Navbar.svelte";
+  import AddProperties from "./pages/components/AddProperties.svelte";
  
   let secret;
   token.subscribe((val) => {
@@ -22,6 +23,7 @@
       "/": Home,
       "/addMaterial": AddMaterial,
       "/logout": Logout,
+      "/props/:mat_id": AddProperties,
     }}
   />
 
