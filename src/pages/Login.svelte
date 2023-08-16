@@ -1,6 +1,6 @@
 <script>
     import { push } from "svelte-spa-router";
-    import { token, user_login } from "./lib/stores";
+    import { token } from "./lib/stores";
     let login;
     let pass;
     function getToken() {
@@ -20,7 +20,6 @@
                 return res.json()})
             .then((data) => {
                 token.set(data.token);
-                user_login.set(login);
                 push("/");
             })
             .catch((err) => alert(err));
