@@ -3,7 +3,7 @@
     import { materials_data } from "../lib/stores";
     import GetMaterialProps from "./GetMaterialProps.svelte";
     let tableData;
-    
+
     materials_data.subscribe((val) => {
         if (Object.keys(val).length != 0) {
             tableData = val;
@@ -15,7 +15,7 @@
     }
     tableData = tableData.map((item) => ({ ...item, expanded: false }));
     function toggleRow(id) {
-        tableData[id].expanded=!tableData[id].expanded;
+        tableData[id].expanded = !tableData[id].expanded;
     }
 </script>
 
@@ -31,6 +31,8 @@
                     <th>Рынок</th>
                     <th>Тип поставки</th>
                     <th>Еденица</th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -44,18 +46,22 @@
                         <td>{row.DeliveryType}</td>
                         <td>{row.Unit}</td>
                         <td
-                            ><button on:click={() => deleteRow(row)}>X</button
+                            ><button class="btn btn-secondary" on:click={() => toggleRow(i)}
+                                >Свойства</button
                             ></td
                         >
                         <td
-                            ><button on:click={() => toggleRow(i)}
-                                >Свойства</button
+                            ><button
+                                class="btn btn-danger"
+                                on:click={() => deleteRow(row)}>X</button
                             ></td
                         >
                     </tr>
                     {#if row.expanded}
                         <tr>
-                            <GetMaterialProps mat_id={row.Id} />
+                            <td colspan="9">
+                                <GetMaterialProps mat_id={row.Id} />
+                            </td>
                         </tr>
                     {/if}
                 {/each}
