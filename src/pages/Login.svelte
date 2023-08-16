@@ -15,7 +15,7 @@
         })
             .then((res) => {
                 if(res.status!=200){
-                    throw new Error("Login Failed!");
+                    throw new Error(`Login Failed!\nStatus: ${res.status}`);
                 }
                 return res.json()})
             .then((data) => {
