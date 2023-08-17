@@ -8,6 +8,7 @@
     let market: string;
     let delivery_type: string;
     let unit: string;
+
     const addMaterial = async () => {
         let newMaterial: material = {
             Name: name,
@@ -28,11 +29,12 @@
         });
         materials_data.update((items) => [...items, newMaterial]);
     };
+
 </script>
 
 <tr>
     <td />
-    <td><input class="form-control" type="text" bind:value={name} placeholder="Наименование" /></td>
+    <td><input class="form-control" type="text" bind:value={name} placeholder="Наименование" required /></td>
     <td><input class="form-control" type="text" bind:value={source} placeholder="Источник данных"/></td>
     <td><input class="form-control" type="text" bind:value={group}  placeholder="Группа"/></td>
     <td><input class="form-control" type="text" bind:value={market} placeholder="Рынок" /></td>
