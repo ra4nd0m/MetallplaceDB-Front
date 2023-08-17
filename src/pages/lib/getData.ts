@@ -1,3 +1,5 @@
+
+
 export async function getMaterials(token: string) {
     let ret_value: any;
     let payload = '';
@@ -22,7 +24,7 @@ export async function postMaterial(token:string, material:material) {
 
 async function doFetch(payload: string, address: string, token: string) {
     let ret_value: matProp[] | material[] | string;
-    await fetch(`http://localhost:3030${address}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}${address}`, {
         method: 'POST',
         headers: { Authorization: token, "Content-Type": "application/json" },
         body: payload,
