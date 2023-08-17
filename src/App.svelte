@@ -2,7 +2,6 @@
   import Router, { push } from "svelte-spa-router";
   import Login from "./pages/Login.svelte";
   import { token } from "./pages/lib/stores";
-  import AddMaterial from "./pages/AddMaterial.svelte";
   import Home from "./pages/Home.svelte";
   import Logout from "./pages/Logout.svelte";
   import Navbar from "./pages/components/Navbar.svelte";
@@ -21,7 +20,6 @@
     routes={{
       "/login": Login,
       "/": Home,
-      "/addMaterial": AddMaterial,
       "/logout": Logout,
       "/props/:mat_id": AddProperties,
     }}
