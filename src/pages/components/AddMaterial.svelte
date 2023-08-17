@@ -1,7 +1,7 @@
 <script lang="ts">
     import { materials_data } from "../lib/stores";
     import { postMaterial, type material } from "../lib/getData";
-    export let token: string;
+    export let secret: string;
     let name: string;
     let source: string;
     let group: string;
@@ -23,7 +23,7 @@
         market = "";
         delivery_type = "";
         unit = "";
-        newMaterial.Id = await postMaterial(token, newMaterial).then((val) => {
+        newMaterial.Id = await postMaterial(secret, newMaterial).then((val) => {
             return val.id;
         });
         materials_data.update((items) => [...items, newMaterial]);

@@ -80,19 +80,16 @@
                     {#if row.expanded}
                         <tr>
                             <td colspan="9">
-                                <GetMaterialProps secret={secret}  mat_id={row.Id} />
+                                <GetMaterialProps {secret} mat_id={row.Id} />
                             </td>
                         </tr>
                     {/if}
                 {/each}
-                <AddMaterial token={secret} />
+                <AddMaterial {secret} />
             </tbody>
         </table>
     {/if}
-    <GetMaterialsList secret={secret} />
-    <button class="btn btn-primary" on:click={() => push("/addMaterial")}
-        >Добавить материал</button
-    >
+    <GetMaterialsList {secret} />
     <div class="pagination">
         {#if totalPages != 0}
             <button
