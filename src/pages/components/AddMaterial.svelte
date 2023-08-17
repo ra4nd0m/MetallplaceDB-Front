@@ -32,13 +32,13 @@
 
 <tr>
     <td />
-    <td><input type="text" bind:value={name} placeholder="Наименование" /></td>
-    <td><input type="text" bind:value={source} placeholder="Источник данных"/></td>
-    <td><input type="text" bind:value={group}  placeholder="Группа"/></td>
-    <td><input type="text" bind:value={market} placeholder="Рынок" /></td>
-    <td><input type="text" bind:value={delivery_type} placeholder="	Тип поставки"/></td>
-    <td><input type="text" bind:value={unit} placeholder="Еденица" /></td>
-    <td><button on:click={async () => await addMaterial()}>Добавить</button></td
+    <td><input class="form-control" type="text" bind:value={name} placeholder="Наименование" /></td>
+    <td><input class="form-control" type="text" bind:value={source} placeholder="Источник данных"/></td>
+    <td><input class="form-control" type="text" bind:value={group}  placeholder="Группа"/></td>
+    <td><input class="form-control" type="text" bind:value={market} placeholder="Рынок" /></td>
+    <td><input class="form-control" type="text" bind:value={delivery_type} placeholder="	Тип поставки"/></td>
+    <td><input class="form-control" type="text" bind:value={unit} placeholder="Еденица" /></td>
+    <td><button class="btn btn-success" on:click={async () => await addMaterial()}>Добавить</button></td
     >
-    <td><button>Отмена</button></td>
+    <td></td>
 </tr>
