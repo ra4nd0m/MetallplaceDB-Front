@@ -3,7 +3,7 @@
     import { token, materials_data } from "../lib/stores";
     import GetMaterialProps from "./GetMaterialProps.svelte";
     import { push } from "svelte-spa-router";
-    import AddMaterialTable from "./AddMaterialTable.svelte";
+    import AddMaterial from "./AddMaterial.svelte";
     let tableData;
     let page = 0;
     let itemsPerPage = 10;
@@ -85,7 +85,7 @@
                         </tr>
                     {/if}
                 {/each}
-                <AddMaterialTable token={secret} />
+                <AddMaterial token={secret} />
             </tbody>
         </table>
     {/if}
