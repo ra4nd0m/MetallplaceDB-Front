@@ -1,9 +1,9 @@
 <script lang="ts">
     import { push } from "svelte-spa-router";
     import { getMaterials } from "../lib/getData";
-    import { token, materials_data } from "../lib/stores";
-    let secret: string;
-    token.subscribe((value) => (secret = value));
+    import { materials_data } from "../lib/stores";
+    export let secret: string;
+
     async function grabData(key: string) {
         if (key.length != 0) {
             let material_list;

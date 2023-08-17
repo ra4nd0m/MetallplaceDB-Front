@@ -1,12 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getMatProps, type matProp } from "../lib/getData";
-    import { token } from "../lib/stores";
+    import { getMatProps, type matProp } from "../lib/getData";;
     import { push } from "svelte-spa-router";
     let material_props_list: string | matProp[];
-    let secret: string;
+    export let secret: string;
     export let mat_id: number;
-    token.subscribe((value) => (secret = value));
+
     onMount(async () => {
         material_props_list = await getMatProps(secret, mat_id);
         console.log(material_props_list);
