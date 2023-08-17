@@ -1,6 +1,6 @@
 <script lang="ts">
     import { push } from "svelte-spa-router";
-    import { getMaterials, doFetch } from "../lib/getData";
+    import { doFetch } from "../lib/getData";
     import { materials_data } from "../lib/stores";
     export let secret: string;
 
