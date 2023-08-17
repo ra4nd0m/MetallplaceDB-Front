@@ -1,15 +1,38 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getMatProps, type matProp } from "../lib/getData";;
-    import { push } from "svelte-spa-router";
+    import { doFetch, type matProp } from "../lib/getData";
     let material_props_list: string | matProp[];
     export let secret: string;
     export let mat_id: number;
-
     onMount(async () => {
-        material_props_list = await getMatProps(secret, mat_id);
-        console.log(material_props_list);
+        let payload = JSON.stringify({ material_source_id: mat_id });
+        material_props_list = await doFetch(
+            payload,
+            "/getPropertyList",
+            secret
+        ).then((val) => {
+            return val.list;
+        });
     });
+    let name: string;
+    async function handleAddProp() {
+        let payload = {
+            material_id: mat_id,
+            property: name,
+            kind: "decimal",
+        };
+        let res: any = await doFetch(
+            JSON.stringify(payload),
+            "/addPropertyToMaterial",
+            secret
+        );
+        console.log(res);
+        if(Object.keys(res).length !== 0){
+            if (!res.success) {
+                alert("Ошибка внутреннего сервиса!");
+            }
+        }
+    }
 </script>
 
 {#if typeof material_props_list == "object"}
@@ -30,9 +53,23 @@
                     <td>{row.Kind}</td>
                 </tr>
             {/each}
+            <tr>
+                <td />
+                <td
+                    ><input
+                        type="text"
+                        class="form-control"
+                        placeholder="Название"
+                        bind:value={name}
+                    /></td
+                >
+                <td
+                    ><button class="btn btn-success" on:click={async()=>{await handleAddProp()}}>Добавить свойство</button
+                    ></td
+                >
+            </tr>
         </tbody>
     </table>
-    <button on:click={(()=>push(`/props/${mat_id}`))}   class="btn btn-secondary">Добавить свойство</button>
 {/if}
 
 <style>
