@@ -8,6 +8,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="#/">Материалы</a>
             </li>
+            <li>
+                <a class="nav-link" href='/#/addRecord'>Добавить запись</a>
+            </li>
         {/if}
     </ul>
     <ul class="navbar-nav ms-auto">

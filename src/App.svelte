@@ -5,8 +5,9 @@
   import Home from "./pages/Home.svelte";
   import Logout from "./pages/Logout.svelte";
   import Navbar from "./pages/components/Navbar.svelte";
+    import AddRecord from "./pages/AddRecord.svelte";
 
- 
+
   let secret;
   token.subscribe((val) => {
     localStorage.setItem("token", val);
@@ -21,9 +22,9 @@
       "/login": Login,
       "/": Home,
       "/logout": Logout,
+      "/addRecord": AddRecord,
     }}
   />
-
 </main>
 <footer>
   <p>Your token is: {secret}</p>
