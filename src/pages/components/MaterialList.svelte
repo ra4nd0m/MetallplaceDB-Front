@@ -1,13 +1,16 @@
 <script lang="ts">
     import GetMaterialsList from "./GetMaterialsList.svelte";
-    import { materials_data } from "../lib/stores";
+    import { token, materials_data } from "../lib/stores";
     import GetMaterialProps from "./GetMaterialProps.svelte";
     import { push } from "svelte-spa-router";
+    import AddMaterialTable from "./AddMaterialTable.svelte";
     let tableData;
     let page = 0;
     let itemsPerPage = 10;
     let totalPages = 0;
     let currentPageRows = [];
+    let secret: string;
+    token.subscribe((val) => (secret = val));
     materials_data.subscribe((val) => {
         if (Object.keys(val).length != 0) {
             tableData = val;
@@ -37,7 +40,7 @@
 
 <div>
     {#if typeof tableData == "object"}
-        <table class="table">
+        <table class="table table-responsive">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -77,31 +80,44 @@
                     {#if row.expanded}
                         <tr>
                             <td colspan="9">
-                                <GetMaterialProps mat_id={row.Id} />
+                                <GetMaterialProps secret={secret}  mat_id={row.Id} />
                             </td>
                         </tr>
                     {/if}
                 {/each}
+                <AddMaterialTable token={secret} />
             </tbody>
         </table>
     {/if}
-    <GetMaterialsList />
+    <GetMaterialsList secret={secret} />
     <button class="btn btn-primary" on:click={() => push("/addMaterial")}
         >Добавить материал</button
     >
-    <br />
-    {#if totalPages != 0}
-    <button
-        on:click={() => {
-            if (page > 0) page--;
-            updatePage();
-        }}>Back</button
-    >
-    <button
-        on:click={() => {
-            if (page < totalPages - 1) page++;
-            updatePage();
-        }}>Next</button
-    >
-    {/if}
+    <div class="pagination">
+        {#if totalPages != 0}
+            <button
+                on:click={() => {
+                    if (page > 0) page--;
+                    updatePage();
+                }}
+                class="btn btn-primary btn-page-back">Back</button
+            >
+            <button
+                on:click={() => {
+                    if (page < totalPages - 1) page++;
+                    updatePage();
+                }}
+                class="btn btn-primary btn-page-next">Вперед</button
+            >
+        {/if}
+    </div>
 </div>
+
+<style>
+    .pagination {
+        padding-top: 2rem;
+    }
+    .btn-page-back {
+        margin-right: 1rem;
+    }
+</style>
