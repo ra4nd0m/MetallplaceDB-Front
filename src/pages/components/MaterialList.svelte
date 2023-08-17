@@ -8,12 +8,12 @@
         if (Object.keys(val).length != 0) {
             tableData = val;
             localStorage.setItem("materials_data", JSON.stringify(val));
+            tableData = tableData.map((item) => ({ ...item, expanded: false }));
         }
     });
     function deleteRow(selectedRow) {
         tableData = tableData.filter((row) => row != selectedRow);
     }
-    tableData = tableData.map((item) => ({ ...item, expanded: false }));
     function toggleRow(id) {
         tableData[id].expanded = !tableData[id].expanded;
     }
