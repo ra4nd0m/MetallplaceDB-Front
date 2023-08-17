@@ -2,7 +2,6 @@
     import GetMaterialsList from "./GetMaterialsList.svelte";
     import { token, materials_data } from "../lib/stores";
     import GetMaterialProps from "./GetMaterialProps.svelte";
-    import { push } from "svelte-spa-router";
     import AddMaterial from "./AddMaterial.svelte";
     let tableData;
     let page = 0;
