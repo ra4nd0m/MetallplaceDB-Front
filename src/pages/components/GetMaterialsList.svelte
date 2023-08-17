@@ -1,16 +1,22 @@
 <script lang="ts">
     import { push } from "svelte-spa-router";
-    import { getMaterials } from "../lib/getData";
+    import { getMaterials, doFetch } from "../lib/getData";
     import { materials_data } from "../lib/stores";
     export let secret: string;
 
     async function grabData(key: string) {
         if (key.length != 0) {
             let material_list;
-            material_list = await getMaterials(secret);
+            material_list = await doFetch("", "/getMaterialList", secret).then(
+                (val) => {
+                    return val.list;
+                }
+            );
             materials_data.set(material_list);
-            materials_data.subscribe((val)=>localStorage.setItem("materials_data",JSON.stringify(val)));
-        }else{
+            materials_data.subscribe((val) =>
+                localStorage.setItem("materials_data", JSON.stringify(val))
+            );
+        } else {
             push("/login");
         }
     }

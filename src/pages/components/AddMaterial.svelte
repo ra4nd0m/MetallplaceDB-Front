@@ -1,6 +1,6 @@
 <script lang="ts">
     import { materials_data } from "../lib/stores";
-    import { postMaterial, type material } from "../lib/getData";
+    import { doFetch, type material } from "../lib/getData";
     import * as yup from "yup";
     export let secret: string;
     let name: string;
@@ -47,9 +47,9 @@
         market = "";
         delivery_type = "";
         unit = "";
-        newMaterial.Id = await postMaterial(secret, newMaterial).then((val) => {
+        newMaterial.Id=await doFetch(JSON.stringify(newMaterial),'/addMaterial',secret).then((val)=>{
             return val.id;
-        });
+        })
         materials_data.update((items) => [...items, newMaterial]);
     };
 </script>
