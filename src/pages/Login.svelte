@@ -14,10 +14,11 @@
             body: JSON.stringify(payload),
         })
             .then((res) => {
-                if(res.status!=200){
+                if (res.status != 200) {
                     throw new Error(`Login Failed!\nStatus: ${res.status}`);
                 }
-                return res.json()})
+                return res.json();
+            })
             .then((data) => {
                 token.set(data.token);
                 push("/");
@@ -26,9 +27,27 @@
     }
 </script>
 
-<form on:submit|preventDefault={getToken}>
-    <h1>Login</h1>
-    <input type="text" name="login" bind:value={login} />
-    <input type="password" name="password" bind:value={pass} />
-    <button type="submit">Login</button>
-</form>
+<div class="d-flex  justify-content-center" >
+    <form on:submit|preventDefault={getToken}>
+        <h1 class="ms-3 mt-3">Вход</h1>
+        <div class="ms-3 mt-3">
+            <input
+                class="form-control"
+                type="text"
+                name="login"
+                bind:value={login}
+            />
+        </div>
+        <div class="ms-3 mt-3">
+            <input
+                class="form-control"
+                type="password"
+                name="password"
+                bind:value={pass}
+            />
+        </div>
+        <div class="ms-3 mt-3">
+            <button class="btn btn-primary" type="submit">Login</button>
+        </div>
+    </form>
+</div>

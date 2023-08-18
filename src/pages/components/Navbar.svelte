@@ -16,9 +16,9 @@
     <ul class="navbar-nav ms-auto">
         <li class="nav-item">
             {#if key == ""}
-                <a class="nav-link" href="/#/login">Login</a>
+                <a class="nav-link" href="/#/login">Вход</a>
             {:else}
-                <a class="nav-link" href="/#/logout">Log Out</a>
+                <a class="nav-link" href="/#/logout">Выход</a>
             {/if}
         </li>
     </ul>
