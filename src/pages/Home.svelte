@@ -6,9 +6,8 @@
     token.subscribe((value) => (secret = value));
 </script>
 
-<div>
+
 {#if secret.length != 0}
     <MaterialList  />
 {:else}{push("/login")}
 {/if}
-</div>

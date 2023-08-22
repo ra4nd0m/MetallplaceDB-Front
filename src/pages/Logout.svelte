@@ -1,13 +1,13 @@
 <script>
     import { push } from "svelte-spa-router";
-    import { token,materials_data } from "./lib/stores";
+    import { token } from "./lib/stores";
 
-    if(localStorage.getItem("token")){
-        localStorage.removeItem("token");
+    if(sessionStorage.getItem("token")){
+        sessionStorage.removeItem("token");
         token.set('');
     }
-    if(localStorage.getItem("materials_data")){
-        localStorage.removeItem("materials_data");
+    if(sessionStorage.getItem("materials_data")){
+        sessionStorage.removeItem("materials_data");
         token.set('');
     };
     push("/");

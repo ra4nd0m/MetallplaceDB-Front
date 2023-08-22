@@ -19,7 +19,7 @@
     materials_data.subscribe((val) => {
         if (Object.keys(val).length != 0) {
             tableData = val;
-            localStorage.setItem("materials_data", JSON.stringify(val));
+            sessionStorage.setItem("materials_data", JSON.stringify(val));
             totalPages = Math.ceil(tableData.length / itemsPerPage);
             tableData = tableData.map((item) => ({
                 ...item,

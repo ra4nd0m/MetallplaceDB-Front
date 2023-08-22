@@ -10,7 +10,7 @@
 
   let secret;
   token.subscribe((val) => {
-    localStorage.setItem("token", val);
+    sessionStorage.setItem("token", val);
     secret = val;
   });
 </script>
