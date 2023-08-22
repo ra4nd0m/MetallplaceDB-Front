@@ -5,7 +5,7 @@
     export let secret: string;
     export let mat_id: number;
     onMount(async () => {
-        let payload = JSON.stringify({ material_source_id: mat_id });
+        let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         material_props_list = await doFetch(
             payload,
             "/getPropertyList",

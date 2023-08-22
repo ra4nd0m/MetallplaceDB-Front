@@ -9,7 +9,7 @@
     let created_on;
     let search_item: string = "";
     onMount(async () => {
-        let payload = JSON.stringify({ material_source_id: mat_id });
+        let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         material_props_list = await doFetch(
             payload,
             "/getPropertyList",
