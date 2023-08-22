@@ -7,7 +7,7 @@
     export let mat_id: number;
     export let secret: string;
     let created_on;
-    let search_item:string ='';
+    let search_item: string = "";
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: mat_id });
         material_props_list = await doFetch(
@@ -20,7 +20,7 @@
         console.log(material_props_list);
     });
     async function submitRecord() {
-        for (const prop of material_props_list){
+        for (const prop of material_props_list) {
             let payload = {
                 material_source_id: mat_id,
                 property_name: prop.Name,
@@ -29,11 +29,7 @@
                 created_on: created_on,
             };
             console.log(payload);
-            await doFetch(
-                JSON.stringify(payload),
-                "/addValue",
-                secret
-            );
+            await doFetch(JSON.stringify(payload), "/addValue", secret);
         }
     }
     interface propVal extends matProp {
@@ -42,32 +38,32 @@
 </script>
 
 {#if typeof material_props_list != "undefined"}
-<div class="d-flex justify-content-center">
-    <form on:submit|preventDefault={async()=>await submitRecord()}>
-        {#each material_props_list as prop}
+    <div class="d-flex justify-content-center">
+        <form on:submit|preventDefault={async () => await submitRecord()}>
+            {#each material_props_list as prop}
+                <div class="ms-3 mt-3">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder={prop.Name}
+                        bind:value={prop.Value}
+                    />
+                </div>
+            {/each}
             <div class="ms-3 mt-3">
-                <input
-                    type="text"
+                <Flatpickr
+                    options={{ enableTime: false }}
+                    bind:formattedValue={created_on}
                     class="form-control"
-                    placeholder={prop.Name}
-                    bind:value={prop.Value}
+                    on:change={(dateStr) => {
+                        created_on = dateStr;
+                    }}
+                    placeholder="Дата"
                 />
             </div>
-        {/each}
-        <div class="ms-3 mt-3">
-            <Flatpickr
-                options={{ enableTime: false }}
-                bind:formattedValue={created_on}
-                class="form-control"
-                on:change={(dateStr) => {
-                    created_on = dateStr;
-                }}
-                placeholder="Дата"
-            />
-        </div>
-        <div class="ms-3 mt-3">
-            <button type="submit" class="btn btn-success">Добавить</button>
-        </div>
-    </form>
-</div>
+            <div class="ms-3 mt-3">
+                <button type="submit" class="btn btn-success">Добавить</button>
+            </div>
+        </form>
+    </div>
 {/if}
