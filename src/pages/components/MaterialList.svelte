@@ -32,11 +32,11 @@
             );
         }
     });
-
-    $: filteredData = tableData.filter((item) =>
-        item.Name.toLowerCase().includes(search_item.toLowerCase())
-    );
-
+    if (typeof tableData != "undefined") {
+        filteredData = tableData.filter((item) =>
+            item.Name.toLowerCase().includes(search_item.toLowerCase())
+        );
+    }
     const updatePage = () => {
         currentPageRows = tableData.slice(
             page * itemsPerPage,
