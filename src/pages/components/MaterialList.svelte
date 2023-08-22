@@ -4,6 +4,7 @@
     import GetMaterialProps from "./GetMaterialProps.svelte";
     import AddMaterial from "./AddMaterial.svelte";
     import AddRecord from "./AddRecord.svelte";
+    import SubmenuSwitch from "./SubmenuSwitch.svelte";
 
     let tableData;
     let page = 0;
@@ -13,6 +14,7 @@
     let secret: string;
     let search_item: string = "";
     let filteredData = [];
+    let selectedMenu;
     token.subscribe((val) => (secret = val));
     materials_data.subscribe((val) => {
         if (Object.keys(val).length != 0) {
@@ -21,12 +23,9 @@
             totalPages = Math.ceil(tableData.length / itemsPerPage);
             tableData = tableData.map((item) => ({
                 ...item,
-                propsExpanded: false,
+                expanded: false,
             }));
-            tableData = tableData.map((item) => ({
-                ...item,
-                recordsExpanded: false,
-            }));
+
             currentPageRows = tableData.slice(
                 page * itemsPerPage,
                 (page + 1) * itemsPerPage
@@ -47,15 +46,8 @@
     function deleteRow(selectedRow) {
         tableData = tableData.filter((row) => row != selectedRow);
     }
-    function toggleProps(id: number) {
-        filteredData[id].propsExpanded = !filteredData[id].propsExpanded;
-        if (filteredData[id].recordsExpanded)
-        filteredData[id].recordsExpanded = !filteredData[id].recordsExpanded;
-    }
-    function toggleValues(id: number) {
-        filteredData[id].recordsExpanded = !filteredData[id].recordsExpanded;
-        if (filteredData[id].propsExpanded)
-        filteredData[id].propsExpanded = !filteredData[id].propsExpanded;
+    function toggleShown(id: number) {
+        filteredData[id].expanded = !filteredData[id].expanded;
     }
 </script>
 
@@ -67,6 +59,7 @@
             class="form-control"
             bind:value={search_item}
         />
+        <!--Search Bar-->
         <div style="padding-top: 1%;">
             <table class="table table-responsive">
                 <thead>
@@ -94,33 +87,32 @@
                             <td>{row.Unit}</td>
                             <td
                                 ><button
-                                    class="btn btn-primary"
-                                    on:click={() => toggleValues(i)}
-                                    >Записи</button
-                                ></td
-                            >
-                            <td
-                                ><button
                                     class="btn btn-secondary"
-                                    on:click={() => toggleProps(i)}
+                                    on:click={() => toggleShown(i)}
                                     >Свойства</button
                                 ></td
                             >
                         </tr>
-                        {#if row.propsExpanded}
+                        {#if row.expanded}
                             <tr>
                                 <td colspan="9">
-                                    <GetMaterialProps
-                                        {secret}
-                                        mat_id={row.Id}
-                                    />
-                                </td>
-                            </tr>
-                        {/if}
-                        {#if row.recordsExpanded}
-                            <tr>
-                                <td colspan="9">
-                                    <AddRecord {secret} mat_id={row.Id} />
+                                    <SubmenuSwitch bind:selectedMenu>
+                                        {#if selectedMenu == "propsList"}
+                                            <GetMaterialProps
+                                                {secret}
+                                                mat_id={row.Id}
+                                            />
+                                        {/if}
+                                        {#if selectedMenu == "addRecord"}
+                                            <AddRecord
+                                                {secret}
+                                                mat_id={row.Id}
+                                            />
+                                        {/if}
+                                        {#if selectedMenu == "showRecords"}
+                                            <p>Show Records</p>
+                                        {/if}
+                                    </SubmenuSwitch>
                                 </td>
                             </tr>
                         {/if}
