@@ -94,7 +94,7 @@
             class="form-control"
             type="text"
             bind:value={delivery_type}
-            placeholder="	Тип поставки"
+            placeholder="Тип поставки"
         /></td
     >
     <td
