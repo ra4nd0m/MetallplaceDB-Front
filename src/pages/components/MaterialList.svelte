@@ -4,12 +4,15 @@
     import GetMaterialProps from "./GetMaterialProps.svelte";
     import AddMaterial from "./AddMaterial.svelte";
     import AddRecord from "./AddRecord.svelte";
+
     let tableData;
     let page = 0;
     let itemsPerPage = 10;
     let totalPages = 0;
     let currentPageRows = [];
     let secret: string;
+    let search_item: string = "";
+    let filteredData = [];
     token.subscribe((val) => (secret = val));
     materials_data.subscribe((val) => {
         if (Object.keys(val).length != 0) {
@@ -31,6 +34,10 @@
         }
     });
 
+    $: filteredData = tableData.filter((item) =>
+        item.Name.toLowerCase().includes(search_item.toLowerCase())
+    );
+
     const updatePage = () => {
         currentPageRows = tableData.slice(
             page * itemsPerPage,
@@ -50,7 +57,14 @@
 </script>
 
 <div>
-    {#if typeof tableData == "object"}
+    {#if typeof filteredData == "object"}
+        <input
+            type="search"
+            placeholder="Поиск.."
+            class="form-control"
+            bind:value={search_item}
+        />
+        <div style="padding-top: 1%;">
         <table class="table table-responsive">
             <thead>
                 <tr>
@@ -66,7 +80,7 @@
                 </tr>
             </thead>
             <tbody>
-                {#each tableData as row, i}
+                {#each filteredData as row, i}
                     <tr>
                         <td>{row.Id}</td>
                         <td>{row.Name}</td>
@@ -106,6 +120,7 @@
                 <AddMaterial {secret} />
             </tbody>
         </table>
+    </div>
     {/if}
     <GetMaterialsList {secret} />
     <div class="pagination">
