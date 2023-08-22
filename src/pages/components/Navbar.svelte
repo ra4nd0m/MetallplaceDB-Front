@@ -9,7 +9,7 @@
                 <a class="nav-link" href="#/">Материалы</a>
             </li>
             <li>
-                <a class="nav-link" href='/#/addRecord'>Добавить запись</a>
+                <a class="nav-link" href='/#/getFeed'>Получить фид значений</a>
             </li>
         {/if}
     </ul>

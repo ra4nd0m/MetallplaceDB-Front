@@ -3,6 +3,7 @@
     import { token, materials_data } from "../lib/stores";
     import GetMaterialProps from "./GetMaterialProps.svelte";
     import AddMaterial from "./AddMaterial.svelte";
+    import AddRecord from "./AddRecord.svelte";
     let tableData;
     let page = 0;
     let itemsPerPage = 10;
@@ -15,7 +16,14 @@
             tableData = val;
             localStorage.setItem("materials_data", JSON.stringify(val));
             totalPages = Math.ceil(tableData.length / itemsPerPage);
-            tableData = tableData.map((item) => ({ ...item, expanded: false }));
+            tableData = tableData.map((item) => ({
+                ...item,
+                propsExpanded: false,
+            }));
+            tableData = tableData.map((item) => ({
+                ...item,
+                recordsExpanded: false,
+            }));
             currentPageRows = tableData.slice(
                 page * itemsPerPage,
                 (page + 1) * itemsPerPage
@@ -32,8 +40,12 @@
     function deleteRow(selectedRow) {
         tableData = tableData.filter((row) => row != selectedRow);
     }
-    function toggleRow(id) {
-        tableData[id].expanded = !tableData[id].expanded;
+    function toggleProps(id: number) {
+        tableData[id].propsExpanded = !tableData[id].propsExpanded;
+        console.log(tableData);
+    }
+    function toggleValues(id: number) {
+        tableData[id].recordsExpanded = !tableData[id].recordsExpanded;
     }
 </script>
 
@@ -65,21 +77,28 @@
                         <td>{row.Unit}</td>
                         <td
                             ><button
-                                class="btn btn-secondary"
-                                on:click={() => toggleRow(i)}>Свойства</button
+                                class="btn btn-primary"
+                                on:click={() => toggleValues(i)}>Записи</button
                             ></td
                         >
                         <td
                             ><button
-                                class="btn btn-danger"
-                                on:click={() => deleteRow(row)}>X</button
+                                class="btn btn-secondary"
+                                on:click={() => toggleProps(i)}>Свойства</button
                             ></td
                         >
                     </tr>
-                    {#if row.expanded}
+                    {#if row.propsExpanded}
                         <tr>
                             <td colspan="9">
                                 <GetMaterialProps {secret} mat_id={row.Id} />
+                            </td>
+                        </tr>
+                    {/if}
+                    {#if row.recordsExpanded}
+                        <tr>
+                            <td colspan="9">
+                                <AddRecord {secret} mat_id={row.Id} />
                             </td>
                         </tr>
                     {/if}

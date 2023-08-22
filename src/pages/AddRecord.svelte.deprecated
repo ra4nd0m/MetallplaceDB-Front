@@ -7,6 +7,7 @@
     let secret: string;
     let materialsList;
     let selected;
+    let selectedId: number;
     token.subscribe((val) => {
         secret = val;
     });
@@ -15,7 +16,7 @@
     });
 
     let created_on: any = new Date().toISOString().substr(0, 10);
-    let material_props_list: matProp[];
+    let material_props_list: propVal[];
     async function getProps(id: number) {
         let payload = JSON.stringify({ material_source_id: id });
         material_props_list = await doFetch(
@@ -26,16 +27,39 @@
             return val.list;
         });
     }
-    async function submitValues() {}
+    async function submitValues() {
+        for (const prop of material_props_list) {
+            let payload = {
+                material_source_id: selectedId,
+                property_name: prop.Name,
+                value_float: prop.Value,
+                value_str: prop.Value,
+                created_on: created_on,
+            };
+            console.log(payload);
+            await doFetch(
+                JSON.stringify(payload),
+                "/addValue",
+                secret
+            );
+        }
+
+    }
+
+    interface propVal extends matProp {
+        Value?: string;
+    }
 </script>
 
 <div class="d-flex flex-column" style="width:30%">
     <select
         bind:value={selected}
         on:change={async () => {
-            if (selected !='') {
+            if (selected != "") {
                 console.log(selected);
-                await getProps(selected.Id);}
+                await getProps(selected.Id);
+                selectedId = selected.Id;
+            }
         }}
         class="form-select"
     >
@@ -48,13 +72,18 @@
     </select>
     <p />
     {#if typeof material_props_list != "undefined"}
-        <form on:submit|preventDefault={async () => {}}>
+        <form
+            on:submit|preventDefault={async () => {
+                await submitValues();
+            }}
+        >
             {#each material_props_list as prop}
                 <div class="ms-3 mt-3">
                     <input
                         type="text"
                         class="form-control"
                         placeholder={prop.Name}
+                        bind:value={prop.Value}
                     />
                 </div>
             {/each}
