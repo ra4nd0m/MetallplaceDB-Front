@@ -43,7 +43,7 @@
 
 {#if typeof material_props_list != "undefined"}
 <div class="d-flex justify-content-center">
-    <form>
+    <form on:submit|preventDefault={async()=>await submitRecord()}>
         {#each material_props_list as prop}
             <div class="ms-3 mt-3">
                 <input
