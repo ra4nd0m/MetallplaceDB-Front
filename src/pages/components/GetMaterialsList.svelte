@@ -7,7 +7,7 @@
     async function grabData(key: string) {
         if (key.length != 0) {
             let material_list;
-            material_list = await doFetch("", "/getMaterialList", secret).then(
+            material_list = await doFetch("{}", "/getMaterialList", secret).then(
                 (val) => {
                     return val.list;
                 }
