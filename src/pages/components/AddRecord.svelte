@@ -7,6 +7,7 @@
     export let mat_id: number;
     export let secret: string;
     let created_on;
+    let search_item:string ='';
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: mat_id });
         material_props_list = await doFetch(
@@ -18,6 +19,23 @@
         });
         console.log(material_props_list);
     });
+    async function submitRecord() {
+        for (const prop of material_props_list){
+            let payload = {
+                material_source_id: mat_id,
+                property_name: prop.Name,
+                value_float: prop.Value,
+                value_str: prop.Value,
+                created_on: created_on,
+            };
+            console.log(payload);
+            await doFetch(
+                JSON.stringify(payload),
+                "/addValue",
+                secret
+            );
+        }
+    }
     interface propVal extends matProp {
         Value?: string;
     }
