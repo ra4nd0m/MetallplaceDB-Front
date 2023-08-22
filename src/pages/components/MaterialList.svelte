@@ -48,11 +48,14 @@
         tableData = tableData.filter((row) => row != selectedRow);
     }
     function toggleProps(id: number) {
-        tableData[id].propsExpanded = !tableData[id].propsExpanded;
-        console.log(tableData);
+        filteredData[id].propsExpanded = !filteredData[id].propsExpanded;
+        if (filteredData[id].recordsExpanded)
+        filteredData[id].recordsExpanded = !filteredData[id].recordsExpanded;
     }
     function toggleValues(id: number) {
-        tableData[id].recordsExpanded = !tableData[id].recordsExpanded;
+        filteredData[id].recordsExpanded = !filteredData[id].recordsExpanded;
+        if (filteredData[id].propsExpanded)
+        filteredData[id].propsExpanded = !filteredData[id].propsExpanded;
     }
 </script>
 
@@ -65,62 +68,67 @@
             bind:value={search_item}
         />
         <div style="padding-top: 1%;">
-        <table class="table table-responsive">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Наименование</th>
-                    <th>Источник данных</th>
-                    <th>Группа</th>
-                    <th>Рынок</th>
-                    <th>Тип поставки</th>
-                    <th>Еденица</th>
-                    <th />
-                    <th />
-                </tr>
-            </thead>
-            <tbody>
-                {#each filteredData as row, i}
+            <table class="table table-responsive">
+                <thead>
                     <tr>
-                        <td>{row.Id}</td>
-                        <td>{row.Name}</td>
-                        <td>{row.Source}</td>
-                        <td>{row.Group}</td>
-                        <td>{row.Market}</td>
-                        <td>{row.DeliveryType}</td>
-                        <td>{row.Unit}</td>
-                        <td
-                            ><button
-                                class="btn btn-primary"
-                                on:click={() => toggleValues(i)}>Записи</button
-                            ></td
-                        >
-                        <td
-                            ><button
-                                class="btn btn-secondary"
-                                on:click={() => toggleProps(i)}>Свойства</button
-                            ></td
-                        >
+                        <th>ID</th>
+                        <th>Наименование</th>
+                        <th>Источник данных</th>
+                        <th>Группа</th>
+                        <th>Рынок</th>
+                        <th>Тип поставки</th>
+                        <th>Еденица</th>
+                        <th />
+                        <th />
                     </tr>
-                    {#if row.propsExpanded}
+                </thead>
+                <tbody>
+                    {#each filteredData as row, i}
                         <tr>
-                            <td colspan="9">
-                                <GetMaterialProps {secret} mat_id={row.Id} />
-                            </td>
+                            <td>{row.Id}</td>
+                            <td>{row.Name}</td>
+                            <td>{row.Source}</td>
+                            <td>{row.Group}</td>
+                            <td>{row.Market}</td>
+                            <td>{row.DeliveryType}</td>
+                            <td>{row.Unit}</td>
+                            <td
+                                ><button
+                                    class="btn btn-primary"
+                                    on:click={() => toggleValues(i)}
+                                    >Записи</button
+                                ></td
+                            >
+                            <td
+                                ><button
+                                    class="btn btn-secondary"
+                                    on:click={() => toggleProps(i)}
+                                    >Свойства</button
+                                ></td
+                            >
                         </tr>
-                    {/if}
-                    {#if row.recordsExpanded}
-                        <tr>
-                            <td colspan="9">
-                                <AddRecord {secret} mat_id={row.Id} />
-                            </td>
-                        </tr>
-                    {/if}
-                {/each}
-                <AddMaterial {secret} />
-            </tbody>
-        </table>
-    </div>
+                        {#if row.propsExpanded}
+                            <tr>
+                                <td colspan="9">
+                                    <GetMaterialProps
+                                        {secret}
+                                        mat_id={row.Id}
+                                    />
+                                </td>
+                            </tr>
+                        {/if}
+                        {#if row.recordsExpanded}
+                            <tr>
+                                <td colspan="9">
+                                    <AddRecord {secret} mat_id={row.Id} />
+                                </td>
+                            </tr>
+                        {/if}
+                    {/each}
+                    <AddMaterial {secret} />
+                </tbody>
+            </table>
+        </div>
     {/if}
     <GetMaterialsList {secret} />
     <div class="pagination">
