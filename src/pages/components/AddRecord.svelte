@@ -20,17 +20,21 @@
         console.log(material_props_list);
     });
     async function submitRecord() {
+        let sentSomething: boolean = false;
         for (const prop of material_props_list) {
-            let payload = {
-                material_source_id: mat_id,
-                property_name: prop.Name,
-                value_float: prop.Value,
-                value_str: prop.Value,
-                created_on: created_on,
-            };
-            console.log(payload);
-            await doFetch(JSON.stringify(payload), "/addValue", secret);
+            if (typeof prop.Value != "undefined") {
+                sentSomething = true;
+                let payload = {
+                    material_source_id: mat_id,
+                    property_name: prop.Name,
+                    value_float: prop.Value,
+                    value_str: prop.Value,
+                    created_on: created_on,
+                };
+                await doFetch(JSON.stringify(payload), "/addValue", secret);
+            }
         }
+        if (!sentSomething) alert("Поля пусты!\nЗаполните хотя бы одно!");
     }
     interface propVal extends matProp {
         Value?: string;

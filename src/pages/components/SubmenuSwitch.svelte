@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let selectedMenu;
+    export let selectedMenu = "propsList";
 </script>
 
 <div>
