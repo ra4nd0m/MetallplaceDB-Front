@@ -5,6 +5,7 @@
     import AddMaterial from "./AddMaterial.svelte";
     import AddRecord from "./AddRecord.svelte";
     import SubmenuSwitch from "./SubmenuSwitch.svelte";
+    import RecordsDisplay from "./RecordsDisplay.svelte";
 
     let tableData;
     let page = 0;
@@ -110,7 +111,8 @@
                                             />
                                         {/if}
                                         {#if selectedMenu == "showRecords"}
-                                            <p>Show Records</p>
+                                        <p>Records Display go here</p>
+                                           <!--<RecordsDisplay {secret} mat_id={row.Id}/>--> 
                                         {/if}
                                     </SubmenuSwitch>
                                 </td>
