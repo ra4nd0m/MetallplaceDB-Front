@@ -26,7 +26,9 @@
                 ...item,
                 expanded: false,
             }));
-
+            filteredData = tableData.filter((item) =>
+                item.Name.toLowerCase().includes(search_item.toLowerCase())
+            );
             currentPageRows = tableData.slice(
                 page * itemsPerPage,
                 (page + 1) * itemsPerPage
@@ -34,10 +36,8 @@
         }
     });
     if (typeof tableData != "undefined") {
-        filteredData = tableData.filter((item) =>
-            item.Name.toLowerCase().includes(search_item.toLowerCase())
-        );
     }
+
     const updatePage = () => {
         currentPageRows = tableData.slice(
             page * itemsPerPage,
@@ -111,8 +111,8 @@
                                             />
                                         {/if}
                                         {#if selectedMenu == "showRecords"}
-                                        <p>Records Display go here</p>
-                                           <!--<RecordsDisplay {secret} mat_id={row.Id}/>--> 
+                                            <p>Records Display go here</p>
+                                            <!--<RecordsDisplay {secret} mat_id={row.Id}/>-->
                                         {/if}
                                     </SubmenuSwitch>
                                 </td>
