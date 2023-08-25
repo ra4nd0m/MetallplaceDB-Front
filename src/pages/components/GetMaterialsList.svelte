@@ -16,6 +16,7 @@
             materials_data.subscribe((val) =>
                 localStorage.setItem("materials_data", JSON.stringify(val))
             );
+            window.location.reload();
         } else {
             push("/login");
         }
