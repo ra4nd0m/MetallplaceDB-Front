@@ -111,8 +111,7 @@
                                             />
                                         {/if}
                                         {#if selectedMenu == "showRecords"}
-                                            <p>Records Display go here</p>
-                                            <!--<RecordsDisplay {secret} mat_id={row.Id}/>-->
+                                            <RecordsDisplay {secret} mat_id={row.Id} />
                                         {/if}
                                     </SubmenuSwitch>
                                 </td>
