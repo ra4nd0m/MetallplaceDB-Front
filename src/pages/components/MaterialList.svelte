@@ -26,9 +26,7 @@
                 ...item,
                 expanded: false,
             }));
-            filteredData = tableData.filter((item) =>
-                item.Name.toLowerCase().includes(search_item.toLowerCase())
-            );
+
             currentPageRows = tableData.slice(
                 page * itemsPerPage,
                 (page + 1) * itemsPerPage
@@ -48,6 +46,13 @@
     function toggleShown(id: number) {
         filteredData[id].expanded = !filteredData[id].expanded;
     }
+    $:filteredData=tableData?.filter((item) =>
+                item.Name.toLowerCase().includes(search_item.toLowerCase())
+            );
+
+    function debugLog(){
+        console.log(filteredData);
+    }
 </script>
 
 <div>
@@ -57,6 +62,7 @@
             placeholder="Поиск.."
             class="form-control"
             bind:value={search_item}
+            on:change={()=>debugLog()}
         />
         <!--Search Bar-->
         <div style="padding-top: 1%;">
