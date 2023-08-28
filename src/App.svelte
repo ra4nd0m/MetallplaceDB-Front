@@ -5,7 +5,6 @@
   import Home from "./pages/Home.svelte";
   import Logout from "./pages/Logout.svelte";
   import Navbar from "./pages/components/Navbar.svelte";
-    import GetAvgFeed from "./pages/GetAvgFeed.svelte";
 
 
   let secret;
@@ -22,7 +21,6 @@
       "/login": Login,
       "/": Home,
       "/logout": Logout,
-      "/getFeed":GetAvgFeed,
     }}
   />
 </main>
