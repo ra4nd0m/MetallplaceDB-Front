@@ -35,8 +35,6 @@
             );
         }
     });
-    if (typeof tableData != "undefined") {
-    }
 
     const updatePage = () => {
         currentPageRows = tableData.slice(

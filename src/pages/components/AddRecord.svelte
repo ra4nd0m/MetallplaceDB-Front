@@ -17,7 +17,6 @@
         ).then((val) => {
             return val.list;
         });
-        console.log(material_props_list);
     });
     async function submitRecord() {
         let sentSomething: boolean = false;

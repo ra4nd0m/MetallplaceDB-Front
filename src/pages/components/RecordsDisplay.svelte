@@ -22,11 +22,6 @@
         const buf = dates.split(" ");
         start_date = buf[0];
         finish_date = buf[2];
-        console.log(start_date, finish_date);
-    }
-    function datesSplit(date: string) {
-        const buf = date.split("T");
-        console.log(buf);
     }
     async function getRecords(propId: number) {
         extractDates(dates);
