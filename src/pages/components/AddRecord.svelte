@@ -7,7 +7,6 @@
     export let mat_id: number;
     export let secret: string;
     let created_on;
-    let search_item: string = "";
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         material_props_list = await doFetch(
@@ -21,7 +20,7 @@
     async function submitRecord() {
         let sentSomething: boolean = false;
         for (const prop of material_props_list) {
-            if (typeof prop.Value != "undefined") {
+            if (typeof prop.Value != "undefined" && prop.Value !== "") {
                 sentSomething = true;
                 let payload = {
                     material_source_id: mat_id,
@@ -31,6 +30,7 @@
                     created_on: created_on,
                 };
                 await doFetch(JSON.stringify(payload), "/addValue", secret);
+                prop.Value = "";
             }
         }
         if (!sentSomething) alert("Поля пусты!\nЗаполните хотя бы одно!");
