@@ -7,11 +7,11 @@ First beta
 
 ## For test running do the following:
 1. cd into project with ```cd ./MetallplaceDB-Front```
-2. run ```yarn``` to set up dependencies
+2. run ```yarn``` or ```npm i --legacy-peer-deps``` to set up dependencies
 3. set up your .env file with ```VITE_API_URL``` variable which points to your server
-4. use ```yarn dev``` to launch dev server
+4. use ```yarn dev``` or ```npm run dev``` to launch dev server
 ## Production build
-1. for building prod version of the app use ```yarn run build``` to build the app
+1. for building prod version of the app use ```yarn run build``` or ```npm run build``` to build the app
 2. results will be placed in ```dist``` directory
 3. serve it with an http server
 
