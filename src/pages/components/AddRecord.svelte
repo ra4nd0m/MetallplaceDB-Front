@@ -7,6 +7,14 @@
     export let mat_id: number;
     export let secret: string;
     let created_on;
+    let minPrice: number;
+    let maxPrice: number;
+    let avgPrice: number;
+    //Works only when prop ids are static
+    //Better to utilise backend functionality
+    const avgPriceId = 1;
+    const minPriceId = 2;
+    const maxPriceId = 3;
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         material_props_list = await doFetch(
@@ -16,9 +24,23 @@
         ).then((val) => {
             return val.list;
         });
+        console.log(material_props_list);
     });
+    function calculateAvgPrice() {
+        if (typeof minPrice != "undefined" && typeof maxPrice != "undefined") {
+            avgPrice = (minPrice + maxPrice) / 2;
+        }
+    }
     async function submitRecord() {
-        let sentSomething: boolean = false;
+        //Works only when prop ids are static
+        //Better to utilise backend functionality
+        let payloadAvgPrice = {
+            material_source_id: mat_id,
+            property_name: "Средняя цена",
+            value_float: avgPrice,
+            value_str:avgPrice
+        };
+        /*        let sentSomething: boolean = false;
         for (const prop of material_props_list) {
             if (typeof prop.Value != "undefined" && prop.Value !== "") {
                 sentSomething = true;
@@ -33,7 +55,7 @@
                 prop.Value = "";
             }
         }
-        if (!sentSomething) alert("Поля пусты!\nЗаполните хотя бы одно!");
+        if (!sentSomething) alert("Поля пусты!\nЗаполните хотя бы одно!");*/
     }
     interface propVal extends matProp {
         Value?: string;
@@ -42,19 +64,35 @@
 
 {#if typeof material_props_list != "undefined"}
     <div class="d-flex justify-content-center">
-        <form on:submit|preventDefault={async () => await submitRecord()}>
-            {#each material_props_list as prop}
-            {#if (!(prop.Name==="Прогноз месяц") && !(prop.Name==="Прогноз неделя"))}
-                <div class="ms-3 mt-3">
-                    <input
-                        type="text"
-                        class="form-control"
-                        placeholder={prop.Name}
-                        bind:value={prop.Value}
-                    />
-                </div>
-                {/if}
-            {/each}
+        <form on:submit|preventDefault={() => {}}>
+            <div class="ms-3 mt-3">
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Мин цена"
+                    bind:value={minPrice}
+                    on:input={() => calculateAvgPrice()}
+                />
+            </div>
+            <div class="ms-3 mt-3">
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Макс цена"
+                    bind:value={maxPrice}
+                    on:input={() => calculateAvgPrice()}
+                />
+            </div>
+            <div class="ms-3 mt-3">
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Средняя цена"
+                    bind:value={avgPrice}
+                    disabled
+                />
+            </div>
+
             <div class="ms-3 mt-3">
                 <Flatpickr
                     options={{ enableTime: false }}
