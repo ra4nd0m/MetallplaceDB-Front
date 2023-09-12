@@ -55,24 +55,6 @@
         await doFetch(JSON.stringify(payloadAvgPrice), "/addValue", secret);
         await doFetch(JSON.stringify(payloadMinPrice), "/addValue", secret);
         await doFetch(JSON.stringify(payloadMaxPrice), "/addValue", secret);
-
-        console.log(payloadAvgPrice, payloadMinPrice, payloadMaxPrice);
-        /*        let sentSomething: boolean = false;
-        for (const prop of material_props_list) {
-            if (typeof prop.Value != "undefined" && prop.Value !== "") {
-                sentSomething = true;
-                let payload = {
-                    material_source_id: mat_id,
-                    property_name: prop.Name,
-                    value_float: prop.Value,
-                    value_str: prop.Value,
-                    created_on: created_on,
-                };
-                await doFetch(JSON.stringify(payload), "/addValue", secret);
-                prop.Value = "";
-            }
-        }
-        if (!sentSomething) alert("Поля пусты!\nЗаполните хотя бы одно!");*/
     }
 </script>
 
