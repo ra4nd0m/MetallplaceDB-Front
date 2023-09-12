@@ -44,6 +44,7 @@
     <div class="d-flex justify-content-center">
         <form on:submit|preventDefault={async () => await submitRecord()}>
             {#each material_props_list as prop}
+            {#if (!(prop.Name==="Прогноз месяц") && !(prop.Name==="Прогноз неделя"))}
                 <div class="ms-3 mt-3">
                     <input
                         type="text"
@@ -52,6 +53,7 @@
                         bind:value={prop.Value}
                     />
                 </div>
+                {/if}
             {/each}
             <div class="ms-3 mt-3">
                 <Flatpickr
