@@ -16,6 +16,13 @@
     let search_item: string = "";
     let filteredData = [];
     let selectedMenu;
+    let filters = {
+        Source: [],
+        Group: [],
+        Market: [],
+        DeliveryType: [],
+        Unit: [],
+    };
     token.subscribe((val) => (secret = val));
     materials_data.subscribe((val) => {
         if (Object.keys(val).length != 0) {
@@ -26,14 +33,21 @@
                 ...item,
                 expanded: false,
             }));
-
             currentPageRows = tableData.slice(
                 page * itemsPerPage,
                 (page + 1) * itemsPerPage
             );
+            getFilters("Source" );
+            getFilters("Group");
+            getFilters("Market");
+            getFilters("DeliveryType");
+            getFilters("Unit");
+            console.log(filters);
         }
     });
-
+    function getFilters(filter: string) {
+        filters[filter] = Array.from(new Set(tableData.map((item)=>item[filter])));
+    }
     const updatePage = () => {
         currentPageRows = tableData.slice(
             page * itemsPerPage,
@@ -46,11 +60,11 @@
     function toggleShown(id: number) {
         filteredData[id].expanded = !filteredData[id].expanded;
     }
-    $:filteredData=tableData?.filter((item) =>
-                item.Name.toLowerCase().includes(search_item.toLowerCase())
-            );
+    $: filteredData = tableData?.filter((item) =>
+        item.Name.toLowerCase().includes(search_item.toLowerCase())
+    );
 
-    function debugLog(){
+    function debugLog() {
         console.log(filteredData);
     }
 </script>
@@ -62,7 +76,7 @@
             placeholder="Поиск.."
             class="form-control"
             bind:value={search_item}
-            on:change={()=>debugLog()}
+            on:change={() => debugLog()}
         />
         <!--Search Bar-->
         <div style="padding-top: 1%;">
@@ -115,7 +129,10 @@
                                             />
                                         {/if}
                                         {#if selectedMenu == "showRecords"}
-                                            <RecordsDisplay {secret} mat_id={row.Id} />
+                                            <RecordsDisplay
+                                                {secret}
+                                                mat_id={row.Id}
+                                            />
                                         {/if}
                                     </SubmenuSwitch>
                                 </td>
