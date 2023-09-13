@@ -76,23 +76,22 @@
             filteredData = filteredData.filter((item) => {
                 return item.Source === selectedFilters.source;
             });
-        if(selectedFilters.group!="")
-        filteredData = filteredData.filter((item) => {
+        if (selectedFilters.group != "")
+            filteredData = filteredData.filter((item) => {
                 return item.Group === selectedFilters.group;
             });
-        if(selectedFilters.deliveryType!="")
-        filteredData = filteredData.filter((item) => {
+        if (selectedFilters.deliveryType != "")
+            filteredData = filteredData.filter((item) => {
                 return item.DeliveryType === selectedFilters.deliveryType;
             });
-        if(selectedFilters.market!="")
-        filteredData = filteredData.filter((item) => {
+        if (selectedFilters.market != "")
+            filteredData = filteredData.filter((item) => {
                 return item.Market === selectedFilters.market;
             });
-        if(selectedFilters.unit!="")
-        filteredData = filteredData.filter((item) => {
+        if (selectedFilters.unit != "")
+            filteredData = filteredData.filter((item) => {
                 return item.Unit === selectedFilters.unit;
             });
-        
     }
 </script>
 
@@ -105,37 +104,51 @@
             class="form-control"
             bind:value={search_item}
         />
-        <select bind:value={selectedFilters.source}>
-            <option value="">Источник данных</option>
-            {#each filterItems.Source as item}
-                <option value={item}>{item}</option>
-            {/each}
-        </select>
-        <select bind:value={selectedFilters.group}>
-            <option value="">Группа</option>
-            {#each filterItems.Group as item}
-                <option value={item}>{item}</option>
-            {/each}
-        </select>
-        <select bind:value={selectedFilters.market}>
-            <option value="">Рынок</option>
-            {#each filterItems.Market as item}
-                <option value={item}>{item}</option>
-            {/each}
-        </select>
-        <select bind:value={selectedFilters.deliveryType}>
-            <option value="">Тип поставки</option>
-            {#each filterItems.DeliveryType as item}
-                <option value={item}>{item}</option>
-            {/each}
-        </select>
-        <select bind:value={selectedFilters.unit}>
-            <option value="">Еденица</option>
-            {#each filterItems.Unit as item}
-                <option value={item}>{item}</option>
-            {/each}
-        </select>
-
+        <div class="row" style="padding-top: 1%;">
+            <div class="col">
+                <select bind:value={selectedFilters.source} class="form-select">
+                    <option value="">Источник данных</option>
+                    {#each filterItems.Source as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="col">
+                <select bind:value={selectedFilters.group} class="form-select">
+                    <option value="">Группа</option>
+                    {#each filterItems.Group as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="col">
+            <select bind:value={selectedFilters.market} class="form-select">
+                <option value="">Рынок</option>
+                {#each filterItems.Market as item}
+                    <option value={item}>{item}</option>
+                {/each}
+            </select>
+            </div>
+            <div class="col">
+                <select
+                    bind:value={selectedFilters.deliveryType}
+                    class="form-select"
+                >
+                    <option value="">Тип поставки</option>
+                    {#each filterItems.DeliveryType as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="col">
+                <select bind:value={selectedFilters.unit} class="form-select">
+                    <option value="">Еденица</option>
+                    {#each filterItems.Unit as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
+            </div>
+        </div>
         <div style="padding-top: 1%;">
             <table class="table table-responsive">
                 <thead>
