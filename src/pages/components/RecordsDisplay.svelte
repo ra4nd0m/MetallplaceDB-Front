@@ -10,6 +10,7 @@
     let propList;
     let list;
     let selected: any = "";
+    let propCount = 0;
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         propList = await doFetch(payload, "/getPropertyList", secret).then(
@@ -17,6 +18,8 @@
                 return val.list;
             }
         );
+        propCount = propList.length;
+        console.log(propList, propCount);
     });
     function extractDates(dates: string) {
         const buf = dates.split(" ");
@@ -40,9 +43,34 @@
         });
         list = list.price_feed;
         for (let i = 0; i < list.length; i++) {
-            const buf = list[i].date.split('T');
+            const buf = list[i].date.split("T");
             list[i].date = buf[0];
         }
+        console.log(list);
+    }
+    let data;
+    //Not good
+    //Works only with static prop ids
+    async function getAllRecords() {
+        extractDates(dates);
+        for (let i = 1; i < 6; i++) {
+            let payload = {
+                material_source_id: mat_id,
+                property_id: i,
+                start: start_date,
+                finish: finish_date,
+            };
+            data = await doFetch(
+                JSON.stringify(payload),
+                "/getValueForPeriod",
+                secret
+            ).then((val) => {
+                return val;
+            });
+            data.propId=i;
+            data.push(data);
+        }
+        console.log(data);
     }
 </script>
 
@@ -74,9 +102,29 @@
                 class="btn btn-primary"
                 on:click={async () => {
                     if (selected != "") await getRecords(selected.Id);
+                    await getAllRecords();
                 }}>Загрузить</button
             >
         </div>
+    </div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    {#if selected.length != 0}
+                        {#each propList as prop}
+                            <th>{prop.Name}</th>
+                        {/each}
+                    {/if}
+                </tr>
+            </thead>
+            <tbody>
+                {#each data as item}
+                    <tr><td>{item}</td></tr>
+                {/each}
+            </tbody>
+        </table>
     </div>
     {#if selected.length != 0}
         <div>
