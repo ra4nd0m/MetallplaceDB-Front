@@ -16,7 +16,14 @@
     let search_item: string = "";
     let filteredData = [];
     let selectedMenu;
-    let filters = {
+    let selectedFilters = {
+        source: "",
+        group: "",
+        market: "",
+        deliveryType: "",
+        unit: "",
+    };
+    let filterItems = {
         Source: [],
         Group: [],
         Market: [],
@@ -37,16 +44,17 @@
                 page * itemsPerPage,
                 (page + 1) * itemsPerPage
             );
-            getFilters("Source" );
+            getFilters("Source");
             getFilters("Group");
             getFilters("Market");
             getFilters("DeliveryType");
             getFilters("Unit");
-            console.log(filters);
         }
     });
     function getFilters(filter: string) {
-        filters[filter] = Array.from(new Set(tableData.map((item)=>item[filter])));
+        filterItems[filter] = Array.from(
+            new Set(tableData.map((item) => item[filter]))
+        );
     }
     const updatePage = () => {
         currentPageRows = tableData.slice(
@@ -60,25 +68,74 @@
     function toggleShown(id: number) {
         filteredData[id].expanded = !filteredData[id].expanded;
     }
-    $: filteredData = tableData?.filter((item) =>
-        item.Name.toLowerCase().includes(search_item.toLowerCase())
-    );
-
-    function debugLog() {
-        console.log(filteredData);
+    $: {
+        filteredData = tableData?.filter((item) =>
+            item.Name.toLowerCase().includes(search_item.toLowerCase())
+        );
+        if (selectedFilters.source != "")
+            filteredData = filteredData.filter((item) => {
+                return item.Source === selectedFilters.source;
+            });
+        if(selectedFilters.group!="")
+        filteredData = filteredData.filter((item) => {
+                return item.Group === selectedFilters.group;
+            });
+        if(selectedFilters.deliveryType!="")
+        filteredData = filteredData.filter((item) => {
+                return item.DeliveryType === selectedFilters.deliveryType;
+            });
+        if(selectedFilters.market!="")
+        filteredData = filteredData.filter((item) => {
+                return item.Market === selectedFilters.market;
+            });
+        if(selectedFilters.unit!="")
+        filteredData = filteredData.filter((item) => {
+                return item.Unit === selectedFilters.unit;
+            });
+        
     }
 </script>
 
 <div>
     {#if typeof filteredData == "object"}
+        <!--Search Bar-->
         <input
             type="search"
             placeholder="Поиск.."
             class="form-control"
             bind:value={search_item}
-            on:change={() => debugLog()}
         />
-        <!--Search Bar-->
+        <select bind:value={selectedFilters.source}>
+            <option value="">Источник данных</option>
+            {#each filterItems.Source as item}
+                <option value={item}>{item}</option>
+            {/each}
+        </select>
+        <select bind:value={selectedFilters.group}>
+            <option value="">Группа</option>
+            {#each filterItems.Group as item}
+                <option value={item}>{item}</option>
+            {/each}
+        </select>
+        <select bind:value={selectedFilters.market}>
+            <option value="">Рынок</option>
+            {#each filterItems.Market as item}
+                <option value={item}>{item}</option>
+            {/each}
+        </select>
+        <select bind:value={selectedFilters.deliveryType}>
+            <option value="">Тип поставки</option>
+            {#each filterItems.DeliveryType as item}
+                <option value={item}>{item}</option>
+            {/each}
+        </select>
+        <select bind:value={selectedFilters.unit}>
+            <option value="">Еденица</option>
+            {#each filterItems.Unit as item}
+                <option value={item}>{item}</option>
+            {/each}
+        </select>
+
         <div style="padding-top: 1%;">
             <table class="table table-responsive">
                 <thead>
