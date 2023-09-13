@@ -16,6 +16,20 @@
     let search_item: string = "";
     let filteredData = [];
     let selectedMenu;
+    let selectedFilters = {
+        source: "",
+        group: "",
+        market: "",
+        deliveryType: "",
+        unit: "",
+    };
+    let filterItems = {
+        Source: [],
+        Group: [],
+        Market: [],
+        DeliveryType: [],
+        Unit: [],
+    };
     token.subscribe((val) => (secret = val));
     materials_data.subscribe((val) => {
         if (Object.keys(val).length != 0) {
@@ -26,45 +40,130 @@
                 ...item,
                 expanded: false,
             }));
-
             currentPageRows = tableData.slice(
                 page * itemsPerPage,
                 (page + 1) * itemsPerPage
             );
+            getFilters("Source");
+            getFilters("Group");
+            getFilters("Market");
+            getFilters("DeliveryType");
+            getFilters("Unit");
         }
     });
-
+    function getFilters(filter: string) {
+        filterItems[filter] = Array.from(
+            new Set(tableData.map((item) => item[filter]))
+        );
+    }
     const updatePage = () => {
         currentPageRows = tableData.slice(
             page * itemsPerPage,
             (page + 1) * itemsPerPage
         );
     };
+    function resetFilters() {
+        selectedFilters.deliveryType = "";
+        selectedFilters.group = "";
+        selectedFilters.market = "";
+        selectedFilters.source = "";
+        selectedFilters.unit = "";
+    }
     function deleteRow(selectedRow) {
         tableData = tableData.filter((row) => row != selectedRow);
     }
     function toggleShown(id: number) {
         filteredData[id].expanded = !filteredData[id].expanded;
     }
-    $:filteredData=tableData?.filter((item) =>
-                item.Name.toLowerCase().includes(search_item.toLowerCase())
-            );
-
-    function debugLog(){
-        console.log(filteredData);
+    $: {
+        filteredData = tableData?.filter((item) =>
+            item.Name.toLowerCase().includes(search_item.toLowerCase())
+        );
+        if (selectedFilters.source != "")
+            filteredData = filteredData.filter((item) => {
+                return item.Source === selectedFilters.source;
+            });
+        if (selectedFilters.group != "")
+            filteredData = filteredData.filter((item) => {
+                return item.Group === selectedFilters.group;
+            });
+        if (selectedFilters.deliveryType != "")
+            filteredData = filteredData.filter((item) => {
+                return item.DeliveryType === selectedFilters.deliveryType;
+            });
+        if (selectedFilters.market != "")
+            filteredData = filteredData.filter((item) => {
+                return item.Market === selectedFilters.market;
+            });
+        if (selectedFilters.unit != "")
+            filteredData = filteredData.filter((item) => {
+                return item.Unit === selectedFilters.unit;
+            });
     }
 </script>
 
 <div>
     {#if typeof filteredData == "object"}
+        <!--Search Bar-->
         <input
             type="search"
             placeholder="Поиск.."
             class="form-control"
             bind:value={search_item}
-            on:change={()=>debugLog()}
         />
-        <!--Search Bar-->
+        <div class="row" style="padding-top: 1%;">
+            <div class="col">
+                <select bind:value={selectedFilters.source} class="form-select">
+                    <option value="">Источник данных</option>
+                    {#each filterItems.Source as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="col">
+                <select bind:value={selectedFilters.group} class="form-select">
+                    <option value="">Группа</option>
+                    {#each filterItems.Group as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="col">
+                <select bind:value={selectedFilters.market} class="form-select">
+                    <option value="">Рынок</option>
+                    {#each filterItems.Market as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="col">
+                <select
+                    bind:value={selectedFilters.deliveryType}
+                    class="form-select"
+                >
+                    <option value="">Тип поставки</option>
+                    {#each filterItems.DeliveryType as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="col">
+                <select bind:value={selectedFilters.unit} class="form-select">
+                    <option value="">Еденица</option>
+                    {#each filterItems.Unit as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
+            </div>
+            <div class="col">
+                <button
+                    class="btn btn-secondary"
+                    on:click={() => resetFilters()}
+                >
+                    Сбросить фильтры
+                </button>
+            </div>
+        </div>
         <div style="padding-top: 1%;">
             <table class="table table-responsive">
                 <thead>
@@ -115,7 +214,10 @@
                                             />
                                         {/if}
                                         {#if selectedMenu == "showRecords"}
-                                            <RecordsDisplay {secret} mat_id={row.Id} />
+                                            <RecordsDisplay
+                                                {secret}
+                                                mat_id={row.Id}
+                                            />
                                         {/if}
                                     </SubmenuSwitch>
                                 </td>
