@@ -62,6 +62,13 @@
             (page + 1) * itemsPerPage
         );
     };
+    function resetFilters() {
+        selectedFilters.deliveryType = "";
+        selectedFilters.group = "";
+        selectedFilters.market = "";
+        selectedFilters.source = "";
+        selectedFilters.unit = "";
+    }
     function deleteRow(selectedRow) {
         tableData = tableData.filter((row) => row != selectedRow);
     }
@@ -122,12 +129,12 @@
                 </select>
             </div>
             <div class="col">
-            <select bind:value={selectedFilters.market} class="form-select">
-                <option value="">Рынок</option>
-                {#each filterItems.Market as item}
-                    <option value={item}>{item}</option>
-                {/each}
-            </select>
+                <select bind:value={selectedFilters.market} class="form-select">
+                    <option value="">Рынок</option>
+                    {#each filterItems.Market as item}
+                        <option value={item}>{item}</option>
+                    {/each}
+                </select>
             </div>
             <div class="col">
                 <select
@@ -147,6 +154,14 @@
                         <option value={item}>{item}</option>
                     {/each}
                 </select>
+            </div>
+            <div class="col">
+                <button
+                    class="btn btn-secondary"
+                    on:click={() => resetFilters()}
+                >
+                    Сбросить фильтры
+                </button>
             </div>
         </div>
         <div style="padding-top: 1%;">
