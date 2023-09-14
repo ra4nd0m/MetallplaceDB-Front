@@ -8,9 +8,6 @@
     let start_date;
     let finish_date = "";
     let propList;
-    let list;
-    let selected: any = "";
-    let propCount = 0;
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         propList = await doFetch(payload, "/getPropertyList", secret).then(
@@ -18,101 +15,84 @@
                 return val.list;
             }
         );
-        propCount = propList.length;
-        console.log(propList, propCount);
     });
     function extractDates(dates: string) {
         const buf = dates.split(" ");
         start_date = buf[0];
         finish_date = buf[2];
     }
-    async function getRecords(propId: number) {
-        extractDates(dates);
-        let payload = {
-            material_source_id: mat_id,
-            property_id: propId,
-            start: start_date,
-            finish: finish_date,
-        };
-        list = await doFetch(
-            JSON.stringify(payload),
-            "/getValueForPeriod",
-            secret
-        ).then((val) => {
-            return val;
-        });
-        list = list.price_feed;
-        for (let i = 0; i < list.length; i++) {
-            const buf = list[i].date.split("T");
-            list[i].date = buf[0];
-        }
-        console.log(list);
-    }
-    let data;
+    let dataList = [];
+
     //Not good
-    //Works only with static prop ids
+    //Backend support should work better
     async function getAllRecords() {
+        let initialData = [];
         extractDates(dates);
-        for (let i = 1; i < 6; i++) {
+        for (const prop of propList) {
             let payload = {
                 material_source_id: mat_id,
-                property_id: i,
+                property_id: prop.Id,
                 start: start_date,
                 finish: finish_date,
             };
-            data = await doFetch(
+            let value = await doFetch(
                 JSON.stringify(payload),
                 "/getValueForPeriod",
                 secret
             ).then((val) => {
                 return val;
             });
-            data.propId=i;
-            data.push(data);
+            value = value.price_feed;
+            value.forEach((item) => {
+                const buf = item.date.split("T");
+                item.date = buf[0];
+            });
+            initialData.push(value);
         }
-        console.log(data);
+
+        let recivedDates = [
+            ...new Set(
+                initialData.flatMap((item) => item.map((obj) => obj.date))
+            ),
+        ];
+        dataList = recivedDates.map((item) => {
+            let object = { date: item };
+            initialData.forEach((arr, index) => {
+                let valObj = arr.find((obj) => obj.date === item);
+                object[`value${index + 1}`] = valObj ? valObj.value : "";
+            });
+            return object;
+        });
     }
+    $: dateFilled = dates !== "";
 </script>
 
 <div>
-    <div>
-        <div class="ms-3 mt-3">
-            <select
-                class="form-select"
-                bind:value={selected}
-                on:change={async () => {}}
-            >
-                <option value="" />
-                {#if typeof propList != "undefined"}
-                    {#each propList as prop}
-                        <option value={prop}>{prop.Name}</option>
-                    {/each}
-                {/if}
-            </select>
-        </div>
+    <div class="d-flex justify-content-center">
         <div class="ms-3 mt-3">
             <Flatpickr
                 options={{ enableTime: false, mode: "range" }}
                 bind:formattedValue={dates}
                 class="form-control"
+                placeholder="Дата"
             />
         </div>
         <div class="ms-3 mt-3">
             <button
                 class="btn btn-primary"
+                disabled={!dateFilled}
                 on:click={async () => {
-                    if (selected != "") await getRecords(selected.Id);
                     await getAllRecords();
                 }}>Загрузить</button
             >
         </div>
     </div>
     <div>
-        <table>
+        <table class="table">
             <thead>
                 <tr>
-                    <th>Дата</th>
-                    {#if selected.length != 0}
+                    {#if typeof propList !== "undefined" && dataList.length !== 0}
+                        <th>Дата</th>
                         {#each propList as prop}
                             <th>{prop.Name}</th>
                         {/each}
@@ -120,32 +100,17 @@
                 </tr>
             </thead>
             <tbody>
-                {#each data as item}
-                    <tr><td>{item}</td></tr>
+                {#each dataList as item}
+                    <tr>
+                        <td>{item.date}</td>
+                        <td>{item.value1}</td>
+                        <td>{item.value2}</td>
+                        <td>{item.value3}</td>
+                        <td>{item.value4}</td>
+                        <td>{item.value5}</td>
+                    </tr>
                 {/each}
             </tbody>
         </table>
     </div>
-    {#if selected.length != 0}
-        <div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Значение</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {#if typeof list != "undefined"}
-                        {#each list as item}
-                            <tr>
-                                <td>{item.date}</td>
-                                <td>{item.value}</td>
-                            </tr>
-                        {/each}
-                    {/if}
-                </tbody>
-            </table>
-        </div>
-    {/if}
 </div>
