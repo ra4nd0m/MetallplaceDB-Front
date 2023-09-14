@@ -6,6 +6,10 @@
     import AddRecord from "./AddRecord.svelte";
     import SubmenuSwitch from "./SubmenuSwitch.svelte";
     import RecordsDisplay from "./RecordsDisplay.svelte";
+    import App from "../../App.svelte";
+    import Home from "../Home.svelte";
+    import Login from "../Login.svelte";
+    import Logout from "../Logout.svelte";
 
     let tableData;
     let page = 0;
@@ -99,6 +103,52 @@
             filteredData = filteredData.filter((item) => {
                 return item.Unit === selectedFilters.unit;
             });
+        switch (sortBy) {
+            case "Name":
+                filteredData = filteredData.sort((a, b) =>
+                    a.Name.localeCompare(b.Name)
+                );
+                break;
+            case "Source":
+                filteredData = filteredData.sort((a, b) =>
+                    a.Source.localeCompare(b.Source)
+                );
+                break;
+            case "Group":
+                filteredData = filteredData.sort((a, b) =>
+                    a.Group.localeCompare(b.Group)
+                );
+                break;
+            case "Market":
+                filteredData = filteredData.sort((a, b) =>
+                    a.Market.localeCompare(b.Market)
+                );
+                break;
+            case "Id":
+                filteredData = filteredData.sort((a, b) => a.Id - b.Id);
+                break;
+            case "Unit":
+                filteredData = filteredData.sort((a, b) =>
+                    a.Unit.localeCompare(b.Unit)
+                );
+                break;
+            case "DeliveryType":
+                filteredData = filteredData.sort((a, b) =>
+                    a.DeliveryType.localeCompare(b.DeliveryType)
+                );
+                break;
+        }
+        if (sortDirection === `desc`) {
+            filteredData = filteredData.reverse();
+        }
+    }
+    let sortBy = "";
+    let sortDirection = "asc";
+    function sortTable(field) {
+        if (sortBy === field)
+            sortDirection = sortDirection === "asc" ? "desc" : "asc";
+        else sortDirection = "asc";
+        sortBy = field;
     }
 </script>
 
@@ -111,6 +161,7 @@
             class="form-control"
             bind:value={search_item}
         />
+        <!--Filters-->
         <div class="row" style="padding-top: 1%;">
             <div class="col">
                 <select bind:value={selectedFilters.source} class="form-select">
@@ -164,17 +215,22 @@
                 </button>
             </div>
         </div>
+        <!--Table-->
         <div style="padding-top: 1%;">
             <table class="table table-responsive">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Наименование</th>
-                        <th>Источник данных</th>
-                        <th>Группа</th>
-                        <th>Рынок</th>
-                        <th>Тип поставки</th>
-                        <th>Еденица</th>
+                        <th on:click={() => sortTable("Id")}>ID</th>
+                        <th on:click={() => sortTable("Name")}>Наименование</th>
+                        <th on:click={() => sortTable("Source")}
+                            >Источник данных</th
+                        >
+                        <th on:click={() => sortTable("Group")}>Группа</th>
+                        <th on:click={() => sortTable("Market")}>Рынок</th>
+                        <th on:click={() => sortTable("DeliveryType")}
+                            >Тип поставки</th
+                        >
+                        <th on:click={() => sortTable("Unit")}>Еденица</th>
                         <th />
                         <th />
                     </tr>
