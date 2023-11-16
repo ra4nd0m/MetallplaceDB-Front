@@ -7,7 +7,6 @@
     import SubmenuSwitch from "./SubmenuSwitch.svelte";
     import RecordsDisplay from "./RecordsDisplay.svelte";
 
-
     let tableData;
     let page = 0;
     let itemsPerPage = 10;
@@ -88,10 +87,18 @@
             filteredData = filteredData.filter((item) => {
                 return item.Group === selectedFilters.group;
             });
-        if (selectedFilters.deliveryType != "")
+        if (
+            selectedFilters.deliveryType != "" &&
+            selectedFilters.deliveryType != "0"
+        )
             filteredData = filteredData.filter((item) => {
                 return item.DeliveryType === selectedFilters.deliveryType;
             });
+        if (selectedFilters.deliveryType === "0") {
+            filteredData = filteredData.filter((item) => {
+                return item.DeliveryType.length === 0;
+            });
+        }
         if (selectedFilters.market != "")
             filteredData = filteredData.filter((item) => {
                 return item.Market === selectedFilters.market;
@@ -191,7 +198,11 @@
                 >
                     <option value="">Тип поставки</option>
                     {#each filterItems.DeliveryType as item}
-                        <option value={item}>{item}</option>
+                        {#if !item}
+                            <option value="0">Не указан</option>
+                        {:else}
+                            <option value={item}>{item}</option>
+                        {/if}
                     {/each}
                 </select>
             </div>
