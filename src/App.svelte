@@ -5,7 +5,7 @@
   import Home from "./pages/Home.svelte";
   import Logout from "./pages/Logout.svelte";
   import Navbar from "./pages/components/Navbar.svelte";
-
+  import Reports from "./pages/Reports.svelte";
 
   let secret;
   token.subscribe((val) => {
@@ -21,6 +21,7 @@
       "/login": Login,
       "/": Home,
       "/logout": Logout,
+      "/reports": Reports,
     }}
   />
 </main>
