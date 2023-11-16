@@ -2,11 +2,17 @@
     import Flatpickr from "svelte-flatpickr";
     import { token } from "./lib/stores";
     let reportType;
-    let date:string|any;
+    let date: string | any;
     let secret;
+    let downloading = false;
     token.subscribe((val) => (secret = val));
     async function getReport() {
+        if (!reportType || !date) {
+            alert("Введите данные в форму!");
+            return;
+        }
         try {
+            downloading = true;
             const resp = await fetch(
                 `${
                     import.meta.env.VITE_API_URL
@@ -22,12 +28,14 @@
             if (!resp.ok) {
                 throw new Error(`HTTP error! status:${resp.status}`);
             }
+            console.log(resp);
             const blob = await resp.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = date;
+            link.download = `${date}_${reportType}`;
             link.click();
+            downloading = false;
         } catch (err) {
             alert(err);
         }
@@ -76,8 +84,17 @@
             />
         </div>
         <div class="ms-3 mt-3">
-            <button class="btn btn-primary" type="submit">Получить отчет</button
+            <button
+                class="btn btn-primary"
+                type="submit"
+                disabled={downloading}
             >
+                {#if downloading}
+                    Загрузка...
+                {:else}
+                    Получить отчет
+                {/if}
+            </button>
         </div>
     </form>
 </div>
