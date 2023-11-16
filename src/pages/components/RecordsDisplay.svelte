@@ -63,6 +63,7 @@
             });
             return object;
         });
+        console.log(dataList);
     }
     $: dateFilled = dates !== "";
 </script>
@@ -106,8 +107,8 @@
                         <td>{item.value1}</td>
                         <td>{item.value2}</td>
                         <td>{item.value3}</td>
-                        <td>{item.value4}</td>
-                        <td>{item.value5}</td>
+                        <td>{item.value4 ? item.value4 : ""}</td>
+                        <td>{item.value5 ? item.value5 : ""}</td>
                     </tr>
                 {/each}
             </tbody>
