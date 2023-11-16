@@ -63,7 +63,6 @@
             });
             return object;
         });
-        console.log(dataList);
     }
     $: dateFilled = dates !== "";
 </script>
