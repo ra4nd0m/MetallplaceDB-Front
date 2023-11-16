@@ -6,10 +6,7 @@
     import AddRecord from "./AddRecord.svelte";
     import SubmenuSwitch from "./SubmenuSwitch.svelte";
     import RecordsDisplay from "./RecordsDisplay.svelte";
-    import App from "../../App.svelte";
-    import Home from "../Home.svelte";
-    import Login from "../Login.svelte";
-    import Logout from "../Logout.svelte";
+
 
     let tableData;
     let page = 0;
