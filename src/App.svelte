@@ -25,6 +25,3 @@
     }}
   />
 </main>
-<footer>
-  <p>Your token is: {secret}</p>
-</footer>
