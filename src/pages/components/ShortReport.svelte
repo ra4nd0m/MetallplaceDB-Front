@@ -13,21 +13,50 @@
         }
     }
     function handleSubmit() {
-        const processedFields = fields.map((field) => ({
-            ...field,
-            paragraphs: field.paragraphs.split("\n"),
-        }));
-        console.log(JSON.stringify(processedFields));
+        const processedFields = fields.map((field) => {
+            return {
+                ...field,
+                paragraphs: field.paragraphs.split("\n"),
+            };
+        });
         let payload = {
-            blocks:processedFields,
-            date:date,
-            report_header:""
-        }
-        console.log(JSON.stringify(payload));
+            blocks: processedFields,
+            date: date,
+            report_header: type,
+        };
+        console.log(payload);
     }
 </script>
 
 <div class="d-flex flex-column">
+    <div class="d-flex flex-column">
+        <form>
+            <div class="from-check form-check-inline mt-3 ms-3">
+                <input
+                    class="form-check-input"
+                    type="radio"
+                    id="worldMarket"
+                    value="Мировой рынок металлургического сырья"
+                    bind:group={type}
+                />
+                <label class="form-check-label" for="worldMarket"
+                    >Мировой рынок металлургического сырья</label
+                >
+            </div>
+            <div class="from-check form-check-inline mt-3 ms-3">
+                <input
+                    class="form-check-input"
+                    type="radio"
+                    id="worldAndRussianMarket"
+                    value="Мировой и российский рынок стали"
+                    bind:group={type}
+                />
+                <label class="form-check-label" for="worldAndRussianMarket"
+                    >Мировой и российский рынок стали</label
+                >
+            </div>
+        </form>
+    </div>
     <form on:submit|preventDefault={handleSubmit}>
         {#each fields as field, index (index)}
             <div class="d-flex flex-column align-items-start">
