@@ -38,6 +38,7 @@
             downloading = false;
         } catch (err) {
             alert(err);
+            downloading = false;
         }
     }
 </script>
