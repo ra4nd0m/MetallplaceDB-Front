@@ -12,15 +12,21 @@
             fields = fields.filter((_, i) => i !== index);
         }
     }
-    function handleSubmit() {
-        const processedFields = fields.map((field) => {
+    async function handleSubmit() {
+        const processedFields = fields.map(async(field) => {
+            let fileBytes=null;
+            if(field.file){
+                const arrayBuffer = await field.file[0].arrayBuffer();
+                fileBytes = new Uint8Array(arrayBuffer);
+            }
             return {
                 ...field,
                 paragraphs: field.paragraphs.split("\n"),
+                file:fileBytes
             };
         });
         let payload = {
-            blocks: processedFields,
+            blocks: await Promise.all(processedFields),
             date: date,
             report_header: type,
         };
