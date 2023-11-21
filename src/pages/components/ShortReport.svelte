@@ -13,16 +13,22 @@
         }
     }
     async function handleSubmit() {
-        const processedFields = fields.map(async(field) => {
-            let fileBytes=null;
-            if(field.file){
+        for (const field of fields) {
+            if (!field.paragraphs || !field.title) {
+                alert("Поля не заполнены!");
+                return;
+            }
+        }
+        const processedFields = fields.map(async (field) => {
+            let fileBytes = null;
+            if (field.file) {
                 const arrayBuffer = await field.file[0].arrayBuffer();
                 fileBytes = new Uint8Array(arrayBuffer);
             }
             return {
                 ...field,
                 paragraphs: field.paragraphs.split("\n"),
-                file:fileBytes
+                file: fileBytes,
             };
         });
         let payload = {
