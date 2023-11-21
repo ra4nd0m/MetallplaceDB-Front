@@ -3,9 +3,9 @@
 
     let date;
     let type;
-    let fields = [{ paragraph: "", title: "", file: null }];
+    let fields = [{ paragraphs: "", title: "", file: null }];
     function addField() {
-        fields = [...fields, { paragraph: "", title: "", file: null }];
+        fields = [...fields, { paragraphs: "", title: "", file: null }];
     }
     function removeField(index) {
         if (index !== 0) {
@@ -15,9 +15,15 @@
     function handleSubmit() {
         const processedFields = fields.map((field) => ({
             ...field,
-            paragraph: field.paragraph.split("\n"),
+            paragraphs: field.paragraphs.split("\n"),
         }));
-        console.log(processedFields);
+        console.log(JSON.stringify(processedFields));
+        let payload = {
+            blocks:processedFields,
+            date:date,
+            report_header:""
+        }
+        console.log(JSON.stringify(payload));
     }
 </script>
 
@@ -39,7 +45,7 @@
                         rows="5"
                         class="form-control"
                         placeholder="Параграфы"
-                        bind:value={field.paragraph}
+                        bind:value={field.paragraphs}
                         style="width: 40vw"
                     />
                 </div>
