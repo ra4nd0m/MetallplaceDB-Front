@@ -1,8 +1,14 @@
 <script lang="ts">
     import Flatpickr from "svelte-flatpickr";
+    import { token } from "../lib/stores";
 
+    let secret;
+    token.subscribe((val) => {
+        secret = val;
+    });
     let date;
     let type;
+    let downloading = false;
     let fields = [{ paragraphs: "", title: "", file: null }];
     function addField() {
         fields = [...fields, { paragraphs: "", title: "", file: null }];
@@ -37,6 +43,35 @@
             report_header: type,
         };
         console.log(payload);
+    }
+    async function getReport(payload) {
+        try {
+            downloading = true;
+            const resp = await fetch(
+                `${import.meta.env.VITE_API_URL}/getShortReport`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: secret,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+            if (!resp.ok) throw new Error(`HTTP Error! Status:${resp.status}`);
+            const blob = await resp.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = date;
+            link.click();
+            downloading = false;
+            window.URL.revokeObjectURL(url);
+            document.removeChild(link);
+        } catch (err) {
+            alert(err);
+            downloading = false;
+        }
     }
 </script>
 
@@ -126,7 +161,7 @@
             class="btn btn-secondary ms-3 mt-3"
             on:click|preventDefault={addField}>Доабвить раздел</button
         >
-        <button type="submit" class="btn btn-primary ms-3 mt-3"
+        <button type="submit" class="btn btn-primary ms-3 mt-3" disabled={downloading}
             >Отправить</button
         >
     </form>
