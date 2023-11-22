@@ -4,16 +4,21 @@
     import Flatpickr from "svelte-flatpickr";
     export let mat_id: number;
     export let secret: string;
-    let dates;
-    let start_date;
+    let dates: string;
+    let start_date: string;
     let finish_date = "";
-    let propList;
+    let propList: prop[];
+    interface prop {
+        Id: number;
+        Name: string;
+        Kind: string;
+    }
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         propList = await doFetch(payload, "/getPropertyList", secret).then(
             (val) => {
                 return val.list;
-            }
+            },
         );
     });
     function extractDates(dates: string) {
@@ -21,12 +26,12 @@
         start_date = buf[0];
         finish_date = buf[2];
     }
-    let dataList = [];
+    let dataList: dataListToDisplay[] = [];
 
     //Not good
     //Backend support should work better
     async function getAllRecords() {
-        let initialData = [];
+        let initialData: dateValuePair[][] = [];
         extractDates(dates);
         for (const prop of propList) {
             let payload = {
@@ -38,33 +43,47 @@
             let value = await doFetch(
                 JSON.stringify(payload),
                 "/getValueForPeriod",
-                secret
+                secret,
             ).then((val) => {
                 return val;
             });
             value = value.price_feed;
-            value.forEach((item) => {
+            value.forEach((item: { date: string }) => {
                 const buf = item.date.split("T");
                 item.date = buf[0];
             });
             initialData.push(value);
         }
-
         let recivedDates = [
             ...new Set(
-                initialData.flatMap((item) => item.map((obj) => obj.date))
+                initialData.flatMap((item) => item.map((obj) => obj.date)),
             ),
         ];
         dataList = recivedDates.map((item) => {
-            let object = { date: item };
+            let object: {
+                date: string;
+                [key: string]: number | string | undefined;
+            } = { date: item };
             initialData.forEach((arr, index) => {
                 let valObj = arr.find((obj) => obj.date === item);
                 object[`value${index + 1}`] = valObj ? valObj.value : "";
             });
-            return object;
+            return object as dataListToDisplay;
         });
     }
+    type dateValuePair = {
+        date: string;
+        value: number;
+    };
     $: dateFilled = dates !== "";
+    interface dataListToDisplay {
+        date: string;
+        value1?: string;
+        value2?: string;
+        value3?: string;
+        value4?: string;
+        value5?: string;
+    }
 </script>
 
 <div>

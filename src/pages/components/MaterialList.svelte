@@ -7,15 +7,15 @@
     import SubmenuSwitch from "./SubmenuSwitch.svelte";
     import RecordsDisplay from "./RecordsDisplay.svelte";
 
-    let tableData;
+    let tableData: dataTableObjectExtended[];
     let page = 0;
     let itemsPerPage = 10;
     let totalPages = 0;
     let currentPageRows = [];
     let secret: string;
     let search_item: string = "";
-    let filteredData = [];
-    let selectedMenu;
+    let filteredData: dataTableObjectExtended[] = [];
+    let selectedMenu: string;
     let selectedFilters = {
         source: "",
         group: "",
@@ -23,7 +23,7 @@
         deliveryType: "",
         unit: "",
     };
-    let filterItems = {
+    let filterItems: Record<FilterKeys, (string | undefined)[]> = {
         Source: [],
         Group: [],
         Market: [],
@@ -36,13 +36,13 @@
             tableData = val;
             sessionStorage.setItem("materials_data", JSON.stringify(val));
             totalPages = Math.ceil(tableData.length / itemsPerPage);
-            tableData = tableData.map((item) => ({
+            filteredData = tableData.map((item) => ({
                 ...item,
                 expanded: false,
             }));
             currentPageRows = tableData.slice(
                 page * itemsPerPage,
-                (page + 1) * itemsPerPage
+                (page + 1) * itemsPerPage,
             );
             getFilters("Source");
             getFilters("Group");
@@ -51,15 +51,16 @@
             getFilters("Unit");
         }
     });
-    function getFilters(filter: string) {
+    type FilterKeys = "Source" | "Group" | "Market" | "DeliveryType" | "Unit";
+    function getFilters(filter: FilterKeys) {
         filterItems[filter] = Array.from(
-            new Set(tableData.map((item) => item[filter]))
+            new Set(tableData.map((item) => item[filter])),
         );
     }
     const updatePage = () => {
         currentPageRows = tableData.slice(
             page * itemsPerPage,
-            (page + 1) * itemsPerPage
+            (page + 1) * itemsPerPage,
         );
     };
     function resetFilters() {
@@ -69,7 +70,7 @@
         selectedFilters.source = "";
         selectedFilters.unit = "";
     }
-    function deleteRow(selectedRow) {
+    function deleteRow(selectedRow: dataTableObject) {
         tableData = tableData.filter((row) => row != selectedRow);
     }
     function toggleShown(id: number) {
@@ -77,7 +78,7 @@
     }
     $: {
         filteredData = tableData?.filter((item) =>
-            item.Name.toLowerCase().includes(search_item.toLowerCase())
+            item.Name.toLowerCase().includes(search_item.toLowerCase()),
         );
         if (selectedFilters.source != "")
             filteredData = filteredData.filter((item) => {
@@ -96,7 +97,7 @@
             });
         if (selectedFilters.deliveryType === "0") {
             filteredData = filteredData.filter((item) => {
-                return item.DeliveryType.length === 0;
+                return item.DeliveryType?.length === 0;
             });
         }
         if (selectedFilters.market != "")
@@ -110,22 +111,22 @@
         switch (sortBy) {
             case "Name":
                 filteredData = filteredData.sort((a, b) =>
-                    a.Name.localeCompare(b.Name)
+                    a.Name.localeCompare(b.Name),
                 );
                 break;
             case "Source":
                 filteredData = filteredData.sort((a, b) =>
-                    a.Source.localeCompare(b.Source)
+                    a.Source.localeCompare(b.Source),
                 );
                 break;
             case "Group":
                 filteredData = filteredData.sort((a, b) =>
-                    a.Group.localeCompare(b.Group)
+                    a.Group.localeCompare(b.Group),
                 );
                 break;
             case "Market":
                 filteredData = filteredData.sort((a, b) =>
-                    a.Market.localeCompare(b.Market)
+                    a.Market.localeCompare(b.Market),
                 );
                 break;
             case "Id":
@@ -133,12 +134,12 @@
                 break;
             case "Unit":
                 filteredData = filteredData.sort((a, b) =>
-                    a.Unit.localeCompare(b.Unit)
+                    a.Unit.localeCompare(b.Unit),
                 );
                 break;
             case "DeliveryType":
                 filteredData = filteredData.sort((a, b) =>
-                    a.DeliveryType.localeCompare(b.DeliveryType)
+                    (a.DeliveryType || "").localeCompare(b.DeliveryType || ""),
                 );
                 break;
         }
@@ -148,11 +149,24 @@
     }
     let sortBy = "";
     let sortDirection = "asc";
-    function sortTable(field) {
+    function sortTable(field: string) {
         if (sortBy === field)
             sortDirection = sortDirection === "asc" ? "desc" : "asc";
         else sortDirection = "asc";
         sortBy = field;
+    }
+    interface dataTableObject {
+        Id: number;
+        Name: string;
+        Group: string;
+        DeliveryType?: string;
+        Market: string;
+        Source: string;
+        Unit: string;
+        [key: string]: any;
+    }
+    interface dataTableObjectExtended extends dataTableObject {
+        expanded: boolean;
     }
 </script>
 

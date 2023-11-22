@@ -4,16 +4,16 @@
     import "flatpickr/dist/flatpickr.css";
     export let mat_id: number;
     export let secret: string;
-    let created_on;
-    let minPrice;
-    let maxPrice;
-    let avgPrice;
+    let created_on:string|any;
+    let minPrice:string|number;
+    let maxPrice:number|string;
+    let avgPrice:number|string;
     //Works only when prop ids are static
     //Better to utilise backend functionality
 
     function calculateAvgPrice() {
         if (typeof minPrice != "undefined" && typeof maxPrice != "undefined") {
-            avgPrice = (minPrice + maxPrice) / 2;
+            avgPrice = (Number(minPrice) + Number(maxPrice)) / 2;
         }
     }
     async function submitRecord() {

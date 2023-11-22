@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
     import { push } from "svelte-spa-router";
     import { token } from "./lib/stores";
-    let login;
-    let pass;
+    let login: string;
+    let pass: string;
     function getToken() {
         let payload = {
             username: login,
@@ -27,7 +27,7 @@
     }
 </script>
 
-<div class="d-flex  justify-content-center" >
+<div class="d-flex justify-content-center">
     <form on:submit|preventDefault={getToken}>
         <h1 class="ms-3 mt-3">Вход</h1>
         <div class="ms-3 mt-3">

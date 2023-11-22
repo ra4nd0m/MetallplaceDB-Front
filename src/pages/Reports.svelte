@@ -1,9 +1,9 @@
 <script lang="ts">
     import Flatpickr from "svelte-flatpickr";
     import { token } from "./lib/stores";
-    let reportType;
+    let reportType: string;
     let date: string | any;
-    let secret;
+    let secret: string;
     let downloading = false;
     token.subscribe((val) => (secret = val));
     async function getReport() {
@@ -23,7 +23,7 @@
                         Authorization: secret,
                         "Content-Type": "application/json",
                     },
-                }
+                },
             );
             if (!resp.ok) {
                 throw new Error(`HTTP error! status:${resp.status}`);
