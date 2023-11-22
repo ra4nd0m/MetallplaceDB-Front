@@ -1,3 +1,5 @@
+import { push } from 'svelte-spa-router';
+
 export async function doFetch(payload: string, address: string, token: string) {
     let ret_value: any;
     await fetch(`${import.meta.env.VITE_API_URL}${address}`, {
@@ -5,6 +7,9 @@ export async function doFetch(payload: string, address: string, token: string) {
         headers: { Authorization: token, "Content-Type": "application/json" },
         body: payload,
     }).then((res) => {
+        if (res.status === 401) {
+            push('/login');
+        }
         if (res.status != 200) {
             throw new Error(`Operation failed!\nStatus: ${res.status}`);
         }
