@@ -1,6 +1,7 @@
 <script lang="ts">
     import Flatpickr from "svelte-flatpickr";
     import { token } from "../lib/stores";
+    import { doFetch } from "../lib/getData";
 
     let secret: string;
     token.subscribe((val) => {
@@ -49,18 +50,12 @@
     async function getReport(payload: string) {
         try {
             downloading = true;
-            const resp = await fetch(
-                `${import.meta.env.VITE_API_URL}/getShortReport`,
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: secret,
-                        "Content-Type": "application/json",
-                    },
-                    body: payload,
-                }
+            const resp = await doFetch(
+                payload,
+                "/getShortReport",
+                secret,
+                true,
             );
-            if (!resp.ok) throw new Error(`HTTP Error! Status:${resp.status}`);
             const blob = await resp.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");

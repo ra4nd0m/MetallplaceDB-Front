@@ -1,28 +1,29 @@
 import { push } from 'svelte-spa-router';
 
-export async function doFetch(payload: string, address: string, token: string) {
-    let ret_value: any;
-    await fetch(`${import.meta.env.VITE_API_URL}${address}`, {
-        method: 'POST',
-        headers: { Authorization: token, "Content-Type": "application/json" },
-        body: payload,
-    }).then((res) => {
-        if (res.status === 401) {
+export async function doFetch(payload: string, address: string, token: string, isNew?: boolean) {
+    isNew = isNew || false;
+    try {
+        const resp = await fetch(`${import.meta.env.VITE_API_URL}${address}`, {
+            method: 'POST',
+            headers: { Authorization: token, "Content-Type": "application/json" },
+            body: payload,
+        })
+        if (resp.status === 401) {
             push('/login');
         }
-        if (res.status != 200) {
-            throw new Error(`Operation failed!\nStatus: ${res.status}`);
+        if (resp.status != 200) {
+            throw new Error(`HTTP Error!\nStatus: ${resp.status}`);
         }
-        return res.json();
-    })
-        .then((data) => {
-            ret_value = data;
-        })
-        .catch((err) => {
-            ret_value = '';
-            alert(err);
-        });
-    return ret_value;
+        if (isNew) {
+            return resp;
+        }
+        let ret_value: any;
+        ret_value = await resp.json();
+        return ret_value;
+    } catch (err) {
+        alert(err);
+        return '';
+    }
 }
 export interface material {
     Id?: number;
