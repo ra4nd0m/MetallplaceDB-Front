@@ -2,18 +2,18 @@
     import Flatpickr from "svelte-flatpickr";
     import { token } from "../lib/stores";
 
-    let secret;
+    let secret: string;
     token.subscribe((val) => {
         secret = val;
     });
-    let date;
-    let type;
+    let date: any;
+    let type: string;
     let downloading = false;
-    let fields = [{ paragraphs: "", title: "", file: null }];
+    let fields: inputField[] = [{ paragraphs: "", title: "", file: null }];
     function addField() {
         fields = [...fields, { paragraphs: "", title: "", file: null }];
     }
-    function removeField(index) {
+    function removeField(index: number) {
         if (index !== 0) {
             fields = fields.filter((_, i) => i !== index);
         }
@@ -26,10 +26,11 @@
             }
         }
         const processedFields = fields.map(async (field) => {
-            let fileBytes = null;
+            let fileBytes: Uint8Array | null = null;
             if (field.file) {
                 const arrayBuffer = await field.file[0].arrayBuffer();
                 fileBytes = new Uint8Array(arrayBuffer);
+                console.log(field.file);
             }
             return {
                 ...field,
@@ -43,8 +44,9 @@
             report_header: type,
         };
         console.log(payload);
+        //  await getReport(JSON.stringify(payload));
     }
-    async function getReport(payload) {
+    async function getReport(payload: string) {
         try {
             downloading = true;
             const resp = await fetch(
@@ -55,7 +57,7 @@
                         Authorization: secret,
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(payload),
+                    body: payload,
                 }
             );
             if (!resp.ok) throw new Error(`HTTP Error! Status:${resp.status}`);
@@ -72,6 +74,11 @@
             alert(err);
             downloading = false;
         }
+    }
+    interface inputField {
+        title: string;
+        paragraphs: string;
+        file: FileList | null;
     }
 </script>
 
@@ -126,6 +133,7 @@
                     />
                 </div>
                 <div class="ms-3 mt-3">
+                    <!---->
                     <input
                         class="form-control"
                         type="file"
@@ -161,8 +169,10 @@
             class="btn btn-secondary ms-3 mt-3"
             on:click|preventDefault={addField}>Доабвить раздел</button
         >
-        <button type="submit" class="btn btn-primary ms-3 mt-3" disabled={downloading}
-            >Отправить</button
+        <button
+            type="submit"
+            class="btn btn-primary ms-3 mt-3"
+            disabled={downloading}>Отправить</button
         >
     </form>
 </div>
