@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Reports from "../Reports.svelte";
+    import Reports from "./FullReport.svelte";
     import ShortReport from "./ShortReport.svelte";
     let selectedReportType = "basic";
 </script>

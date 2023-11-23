@@ -1,6 +1,6 @@
 <script lang="ts">
     import Flatpickr from "svelte-flatpickr";
-    import { token } from "./lib/stores";
+    import { token } from "../lib/stores";
     let reportType: string;
     let date: string | any;
     let secret: string;
