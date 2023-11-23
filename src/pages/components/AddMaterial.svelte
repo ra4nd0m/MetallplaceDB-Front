@@ -47,9 +47,15 @@
         market = "";
         delivery_type = "";
         unit = "";
-        newMaterial.Id=await doFetch(JSON.stringify(newMaterial),'/addMaterial',secret).then((val)=>{
-            return val.id;
-        })
+        newMaterial.Id = await doFetch(
+            JSON.stringify(newMaterial),
+            "/addMaterial",
+            secret,
+        ).then((val) => {
+            if (typeof val === "object" && "id" in val) {
+                return val.id;
+            }
+        });
         materials_data.update((items) => [...items, newMaterial]);
     };
 </script>

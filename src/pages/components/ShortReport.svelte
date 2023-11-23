@@ -55,7 +55,7 @@
                 "/getShortReport",
                 secret,
                 true,
-            );
+            ) as Response;
             const blob = await resp.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");

@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { doFetch, type matProp } from "../lib/getData";
+    import { doFetch } from "../lib/getData";
+    import type { matProp, priceFeed } from "../lib/getData";
     import Flatpickr from "svelte-flatpickr";
     export let mat_id: number;
     export let secret: string;
@@ -10,13 +11,12 @@
     let propList: matProp[];
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
-        propList = (await doFetch(payload, "/getPropertyList", secret).then(
-            (val) => {
+        propList =
+            (await doFetch(payload, "/getPropertyList", secret).then((val) => {
                 if (typeof val === "object" && "list" in val) {
                     return val.list as matProp[];
                 }
-            },
-        )) || [];
+            })) || [];
         console.log(propList);
     });
     function extractDates(dates: string) {
@@ -38,14 +38,17 @@
                 start: start_date,
                 finish: finish_date,
             };
-            let value = await doFetch(
+            let value: priceFeed[] = (await doFetch(
                 JSON.stringify(payload),
                 "/getValueForPeriod",
                 secret,
             ).then((val) => {
-                return val;
-            });
-            value = value.price_feed;
+                if (typeof val === "object" && "price_feed" in val) {
+                    return val.price_feed;
+                } else {
+                    return [];
+                }
+            })) as priceFeed[];
             value.forEach((item: { date: string }) => {
                 const buf = item.date.split("T");
                 item.date = buf[0];
@@ -120,9 +123,9 @@
                 {#each dataList as item}
                     <tr>
                         <td>{item.date}</td>
-                        <td>{item.value1}</td>
-                        <td>{item.value2}</td>
-                        <td>{item.value3}</td>
+                        <td>{item.value1 ? item.value1 : ""}</td>
+                        <td>{item.value2 ? item.value2 : ""}</td>
+                        <td>{item.value3 ? item.value3 : ""}</td>
                         <td>{item.value4 ? item.value4 : ""}</td>
                         <td>{item.value5 ? item.value5 : ""}</td>
                     </tr>

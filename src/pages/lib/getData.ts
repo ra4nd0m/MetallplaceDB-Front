@@ -1,6 +1,6 @@
 import { push } from 'svelte-spa-router';
 
-export async function doFetch(payload: string, address: string, token: string, isNew?: boolean) {
+export async function doFetch(payload: string, address: string, token: string, isNew?: boolean): Promise<fetchReturnType> {
     isNew = isNew || false;
     try {
         const resp = await fetch(`${import.meta.env.VITE_API_URL}${address}`, {
@@ -10,6 +10,7 @@ export async function doFetch(payload: string, address: string, token: string, i
         })
         if (resp.status === 401) {
             push('/login');
+            return '';
         }
         if (resp.status != 200) {
             throw new Error(`HTTP Error!\nStatus: ${resp.status}`);
@@ -24,6 +25,21 @@ export async function doFetch(payload: string, address: string, token: string, i
         alert(err);
         return '';
     }
+}
+
+type fetchReturnType = responseId | responseList | priceFeed[] | Response | string;
+
+
+interface responseId {
+    id: number;
+}
+
+interface responseList {
+    list: matProp[] | material[];
+}
+export interface priceFeed {
+    date: string;
+    value: number;
 }
 export interface material {
     Id?: number;
