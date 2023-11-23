@@ -7,7 +7,7 @@
   import Navbar from "./pages/components/Navbar.svelte";
   import ReportTypeSelector from "./pages/components/ReportTypeSelector.svelte";
 
-  let secret;
+  let secret:string;
   token.subscribe((val) => {
     sessionStorage.setItem("token", val);
     secret = val;
