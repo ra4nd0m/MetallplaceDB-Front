@@ -1,25 +1,23 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { doFetch } from "../lib/getData";
+    import { doFetch, type matProp } from "../lib/getData";
     import Flatpickr from "svelte-flatpickr";
     export let mat_id: number;
     export let secret: string;
     let dates: string;
     let start_date: string;
     let finish_date = "";
-    let propList: prop[];
-    interface prop {
-        Id: number;
-        Name: string;
-        Kind: string;
-    }
+    let propList: matProp[];
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
-        propList = await doFetch(payload, "/getPropertyList", secret).then(
+        propList = (await doFetch(payload, "/getPropertyList", secret).then(
             (val) => {
-                return val.list;
+                if (typeof val === "object" && "list" in val) {
+                    return val.list as matProp[];
+                }
             },
-        );
+        )) || [];
+        console.log(propList);
     });
     function extractDates(dates: string) {
         const buf = dates.split(" ");
