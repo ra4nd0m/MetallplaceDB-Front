@@ -45,7 +45,7 @@
             report_header: type,
         };
         console.log(payload);
-        //  await getReport(JSON.stringify(payload));
+        await getReport(JSON.stringify(payload));
     }
     async function getReport(payload: string) {
         try {
