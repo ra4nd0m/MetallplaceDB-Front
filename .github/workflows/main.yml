@@ -14,5 +14,7 @@ jobs:
       - name: Install and Build
         run: |
           npm install --legacy-peer-deps
-          npm run build
+          npm run build 
+      - name: Make an archive
+        run: zip -r -q dist.zip ./dist
     
