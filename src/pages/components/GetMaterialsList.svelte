@@ -15,6 +15,8 @@
             let result = await doFetch("{}", "/getMaterialList", secret);
             if (typeof result === "object" && "list" in result) {
                 material_list = result.list as material[];
+            } else {
+                material_list = [];
             }
             materials_data.set(material_list);
             materials_data.subscribe((val) =>

@@ -17,7 +17,6 @@
                     return val.list as matProp[];
                 }
             })) || [];
-        console.log(propList);
     });
     function extractDates(dates: string) {
         const buf = dates.split(" ");

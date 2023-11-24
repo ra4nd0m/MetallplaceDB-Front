@@ -54,6 +54,9 @@
                 secret,
                 true,
             ) as Response;
+            if(typeof resp !=='object'){
+                throw new Error('Error');
+            }
             const blob = await resp.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -64,7 +67,6 @@
             window.URL.revokeObjectURL(url);
             document.removeChild(link);
         } catch (err) {
-            alert(err);
             downloading = false;
         }
     }

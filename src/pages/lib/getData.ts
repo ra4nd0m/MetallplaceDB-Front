@@ -27,8 +27,12 @@ export async function doFetch(payload: string, address: string, token: string, i
     }
 }
 
-type fetchReturnType = responseId | responseList | priceFeed[] | Response | string;
+type fetchReturnType = responseId | responseList | priceFeed[] | succsessType | Response | string;
 
+
+interface succsessType{
+    succsess:boolean;
+}
 
 interface responseId {
     id: number;

@@ -7,10 +7,10 @@
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         let result = await doFetch(payload, "/getPropertyList", secret);
-        if (result !== undefined) {
-            if (typeof result === "object" && "list" in result) {
-                material_props_list = result.list as matProp[];
-            }
+        if (typeof result === "object" && "list" in result) {
+            material_props_list = result.list as matProp[];
+        } else {
+            material_props_list = [];
         }
     });
     let name: string;
@@ -20,14 +20,13 @@
             property: name,
             kind: "decimal",
         };
-        let res: any = await doFetch(
+        let res = await doFetch(
             JSON.stringify(payload),
             "/addPropertyToMaterial",
             secret,
         );
-        console.log(res);
-        if (Object.keys(res).length !== 0) {
-            if (!res.success) {
+        if (typeof res === "object" && "succsess" in res) {
+            if (!res.succsess) {
                 alert("Ошибка внутреннего сервиса!");
             }
         }

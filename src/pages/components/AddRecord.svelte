@@ -4,10 +4,10 @@
     import "flatpickr/dist/flatpickr.css";
     export let mat_id: number;
     export let secret: string;
-    let created_on:string|any;
-    let minPrice:string|number;
-    let maxPrice:number|string;
-    let avgPrice:number|string;
+    let created_on: string | any;
+    let minPrice: string | number;
+    let maxPrice: number | string;
+    let avgPrice: number | string;
     //Works only when prop ids are static
     //Better to utilise backend functionality
 
@@ -52,9 +52,22 @@
             value_str: `${maxPrice}`,
             created_on: created_on,
         };
-        await doFetch(JSON.stringify(payloadAvgPrice), "/addValue", secret);
-        await doFetch(JSON.stringify(payloadMinPrice), "/addValue", secret);
-        await doFetch(JSON.stringify(payloadMaxPrice), "/addValue", secret);
+        try {
+            await Promise.all([
+                await addRecord(JSON.stringify(payloadAvgPrice)),
+                await addRecord(JSON.stringify(payloadMinPrice)),
+                await addRecord(JSON.stringify(payloadMaxPrice)),
+            ]);
+        } catch (err) {
+            alert(err);
+        }
+    }
+    async function addRecord(payload: string) {
+        let resp = await doFetch(payload, "/addValue", secret);
+        if (typeof resp !== "object" || !("sucssess" in resp)) {
+            throw new Error("Ошибка внутреннего сервиса!");
+        }
+        return;
     }
 </script>
 
