@@ -20,7 +20,7 @@ jobs:
       - name: Make an archive
         run: |
           cd dist
-          zip -r -q ../dist.zip
+          zip -r ./dist.zip dist/*
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
