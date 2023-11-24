@@ -31,7 +31,6 @@
             if (field.file) {
                 const arrayBuffer = await field.file[0].arrayBuffer();
                 fileBytes = new Uint8Array(arrayBuffer);
-                console.log(field.file);
             }
             return {
                 ...field,
@@ -44,7 +43,6 @@
             date: date,
             report_header: type,
         };
-        console.log(payload);
         await getReport(JSON.stringify(payload));
     }
     async function getReport(payload: string) {
