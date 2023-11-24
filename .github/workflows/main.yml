@@ -18,7 +18,9 @@ jobs:
           npm install --legacy-peer-deps
           npm run build 
       - name: Make an archive
-        run: zip -r -q dist.zip ./dist
+        run: |
+          cd dist
+          zip -r -q ../dist.zip
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
