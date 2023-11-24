@@ -10,13 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
+      - name: Create .env file
+        run: |
+          echo VITE_API_URL=${{ secrets.VITE_API_URL}} >> .env
       - name: Install and Build
         run: |
           npm install --legacy-peer-deps
           npm run build 
       - name: Make an archive
-        run: zip -r -q dist.zip ./dist
+        run: |
+          cd dist
+          zip -r -q ../dist.zip
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
