@@ -9,6 +9,7 @@
     let start_date: string;
     let finish_date = "";
     let propList: matProp[];
+    // Fetch the list of properties when the component mounts
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         propList =
@@ -28,46 +29,62 @@
     //Not good
     //Backend support should work better
     async function getAllRecords() {
+        // Extract the start and finish dates from the dates string
         let initialData: dateValuePair[][] = [];
         extractDates(dates);
+        // Loop over each property in the propList
         for (const prop of propList) {
+            // Create the payload for the fetch request
             let payload = {
                 material_source_id: mat_id,
                 property_id: prop.Id,
                 start: start_date,
                 finish: finish_date,
             };
+            // Make the fetch request and store the returned value
             let value: priceFeed[] = (await doFetch(
                 JSON.stringify(payload),
                 "/getValueForPeriod",
                 secret,
             ).then((val) => {
+                // If the returned value is an object and contains a price_feed property, return the price_feed
+                // Otherwise, return an empty array
                 if (typeof val === "object" && "price_feed" in val) {
                     return val.price_feed;
                 } else {
                     return [];
                 }
             })) as priceFeed[];
+            // Format the date in each item of the value array
             value.forEach((item: { date: string }) => {
                 const buf = item.date.split("T");
                 item.date = buf[0];
             });
+            // Add the value array to the initialData array
             initialData.push(value);
         }
+        // Create a new array of unique dates from the initialData array
         let recivedDates = [
             ...new Set(
                 initialData.flatMap((item) => item.map((obj) => obj.date)),
             ),
         ];
+        // Map over each date in recivedDates to create a new object for each date
+        // Each object contains the date and the corresponding values from the initialData array
         dataList = recivedDates.map((item) => {
             let object: {
                 date: string;
                 [key: string]: number | string | undefined;
             } = { date: item };
+            // Loop over each array in the initialData array
             initialData.forEach((arr, index) => {
+                // Find the object in the array that has the same date as the current item
                 let valObj = arr.find((obj) => obj.date === item);
+                // If an object with the same date is found, add its value to the new object
+                // Otherwise, add an empty string
                 object[`value${index + 1}`] = valObj ? valObj.value : "";
             });
+            // Return the new object as an item in the dataList array
             return object as dataListToDisplay;
         });
     }
