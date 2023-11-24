@@ -2,7 +2,7 @@ name: Build an app
 
 on:
   push:
-    branches: [main]
+    branches: [main,actions]
   workflow_dispatch:
 
 jobs:
@@ -19,7 +19,6 @@ jobs:
           npm run build 
       - name: Make an archive
         run: |
-          cd dist
           zip -r ./dist.zip dist/*
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
