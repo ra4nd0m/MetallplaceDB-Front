@@ -25,9 +25,13 @@ jobs:
         with:
             name: MP-Front
             path: ./dist.zip
+      - name: Get version
+        id: package
+        run: echo "::set-output name=version::$(node -p "require('./package.json').version")"
+        shell: bash
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})-$(echo ${GITHUB_SHA})"
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
       - name: Create Release
         id: create_release
@@ -36,7 +40,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
             tag_name: ${{steps.extract_branch.outputs.branch  }}
-            release_name: Release ${{ steps.extract_branch.outputs.branch  }}
+            release_name: Release ${{ steps.extract_branch.outputs.branch  }}-${{ steps.package.outputs.version }}
             draft: false
             prerelease: false
       - name: Upload Release
