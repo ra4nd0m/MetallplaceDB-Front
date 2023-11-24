@@ -69,6 +69,10 @@
                 initialData.flatMap((item) => item.map((obj) => obj.date)),
             ),
         ];
+
+        //Sort the recivedDates
+        recivedDates.sort((a,b)=>new Date(a).getTime()-new Date(b).getTime());
+
         // Map over each date in recivedDates to create a new object for each date
         // Each object contains the date and the corresponding values from the initialData array
         dataList = recivedDates.map((item) => {
