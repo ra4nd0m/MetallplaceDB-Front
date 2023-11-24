@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
+      - name: Create .env file
+        run: |
+          echo VITE_API_URL=${{ secrets.VITE_API_URL}} >> .env
       - name: Install and Build
         run: |
           npm install --legacy-peer-deps
