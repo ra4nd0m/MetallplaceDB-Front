@@ -162,7 +162,7 @@
         </div>
         <button
             class="btn btn-secondary ms-3 mt-3"
-            on:click|preventDefault={addField}>Доабвить раздел</button
+            on:click|preventDefault={addField}>Добавить раздел</button
         >
         <button
             type="submit"
