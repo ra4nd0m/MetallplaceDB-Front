@@ -20,7 +20,7 @@
         }
     }
     async function handleSubmit() {
-        if(!date || !type){
+        if (!date || !type) {
             alert("Поля не заполнены!");
             return;
         }
@@ -31,10 +31,9 @@
             }
         }
         const processedFields = fields.map(async (field) => {
-            let fileBytes: Uint8Array | null = null;
+            let fileBytes: any = null;
             if (field.file) {
-                const arrayBuffer = await field.file[0].arrayBuffer();
-                fileBytes = new Uint8Array(arrayBuffer);
+                fileBytes = await toBase64(field.file[0]);
             }
             return {
                 ...field,
@@ -47,19 +46,26 @@
             date: date,
             report_header: type,
         };
+        console.log(payload);
         await getReport(JSON.stringify(payload));
     }
+    const toBase64 = (file:File)=>new Promise((res,rej) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload=()=>res(reader.result);
+        reader.onerror=rej;
+    });
     async function getReport(payload: string) {
         try {
             downloading = true;
-            const resp = await doFetch(
+            const resp = (await doFetch(
                 payload,
                 "/getShortReport",
                 secret,
                 true,
-            ) as Response;
-            if(typeof resp !=='object'){
-                throw new Error('Error');
+            )) as Response;
+            if (typeof resp !== "object") {
+                throw new Error("Error");
             }
             const blob = await resp.blob();
             const url = window.URL.createObjectURL(blob);
@@ -162,7 +168,6 @@
                     date = dateStr;
                 }}
                 placeholder="Дата"
-                
             />
         </div>
         <button
