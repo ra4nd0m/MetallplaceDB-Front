@@ -34,6 +34,7 @@
             let fileBytes: any = null;
             if (field.file) {
                 fileBytes = await toBase64(field.file[0]);
+                fileBytes = fileBytes.replace(/^data:.*\/.*;base64,/, '');
             }
             return {
                 ...field,
