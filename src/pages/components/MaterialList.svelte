@@ -222,7 +222,7 @@
             </div>
             <div class="col">
                 <select bind:value={selectedFilters.unit} class="form-select">
-                    <option value="">Еденица</option>
+                    <option value="">Единица</option>
                     {#each filterItems.Unit as item}
                         <option value={item}>{item}</option>
                     {/each}

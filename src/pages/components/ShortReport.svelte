@@ -20,6 +20,10 @@
         }
     }
     async function handleSubmit() {
+        if (!date || !type) {
+            alert("Поля не заполнены!");
+            return;
+        }
         for (const field of fields) {
             if (!field.paragraphs || !field.title) {
                 alert("Поля не заполнены!");
@@ -27,10 +31,9 @@
             }
         }
         const processedFields = fields.map(async (field) => {
-            let fileBytes: Uint8Array | null = null;
+            let fileBytes: any = null;
             if (field.file) {
-                const arrayBuffer = await field.file[0].arrayBuffer();
-                fileBytes = new Uint8Array(arrayBuffer);
+                fileBytes = await toBase64(field.file[0]);
             }
             return {
                 ...field,
@@ -43,19 +46,26 @@
             date: date,
             report_header: type,
         };
+        console.log(payload);
         await getReport(JSON.stringify(payload));
     }
+    const toBase64 = (file:File)=>new Promise((res,rej) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload=()=>res(reader.result);
+        reader.onerror=rej;
+    });
     async function getReport(payload: string) {
         try {
             downloading = true;
-            const resp = await doFetch(
+            const resp = (await doFetch(
                 payload,
                 "/getShortReport",
                 secret,
                 true,
-            ) as Response;
-            if(typeof resp !=='object'){
-                throw new Error('Error');
+            )) as Response;
+            if (typeof resp !== "object") {
+                throw new Error("Error");
             }
             const blob = await resp.blob();
             const url = window.URL.createObjectURL(blob);
@@ -151,7 +161,7 @@
         <div class="ms-3 mt-3">
             <Flatpickr
                 style="width:20vw"
-                options={{ enableTime: false }}
+                options={{ enableTime: false, defaultDate: new Date() }}
                 bind:formattedValue={date}
                 class="form-control"
                 on:change={(dateStr) => {
@@ -162,7 +172,7 @@
         </div>
         <button
             class="btn btn-secondary ms-3 mt-3"
-            on:click|preventDefault={addField}>Доабвить раздел</button
+            on:click|preventDefault={addField}>Добавить раздел</button
         >
         <button
             type="submit"
