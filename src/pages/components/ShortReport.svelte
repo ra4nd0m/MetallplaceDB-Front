@@ -20,6 +20,10 @@
         }
     }
     async function handleSubmit() {
+        if(!date || !type){
+            alert("Поля не заполнены!");
+            return;
+        }
         for (const field of fields) {
             if (!field.paragraphs || !field.title) {
                 alert("Поля не заполнены!");
