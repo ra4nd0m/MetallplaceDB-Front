@@ -151,13 +151,14 @@
         <div class="ms-3 mt-3">
             <Flatpickr
                 style="width:20vw"
-                options={{ enableTime: false }}
+                options={{ enableTime: false, defaultDate: new Date() }}
                 bind:formattedValue={date}
                 class="form-control"
                 on:change={(dateStr) => {
                     date = dateStr;
                 }}
                 placeholder="Дата"
+                
             />
         </div>
         <button
