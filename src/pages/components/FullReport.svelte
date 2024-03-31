@@ -37,7 +37,6 @@
             link.click();
             downloading = false;
             window.URL.revokeObjectURL(url);
-            document.removeChild(link);
         } catch (err) {
             alert(err);
             downloading = false;
