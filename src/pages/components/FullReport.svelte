@@ -5,10 +5,14 @@
     let date: string | any;
     let secret: string;
     let downloading = false;
+    let reportTypeValid = true;
+    let dateValid = true;
     token.subscribe((val) => (secret = val));
     async function getReport() {
-        if (!reportType || !date) {
-            alert("Введите данные в форму!");
+        reportTypeValid = reportType !== undefined && reportType !== "";
+        dateValid = date !== "";
+        console.log(dateValid, date)
+        if (!reportTypeValid || !dateValid) {
             return;
         }
         try {
@@ -37,7 +41,6 @@
             link.click();
             downloading = false;
             window.URL.revokeObjectURL(url);
-            document.removeChild(link);
         } catch (err) {
             alert(err);
             downloading = false;
@@ -53,7 +56,7 @@
     >
         <div class="form-check form-check-inline ms-3">
             <input
-                class="form-check-input"
+                class="form-check-input {reportTypeValid ? '' : 'is-invalid'}"
                 type="radio"
                 id="selectorWeekly"
                 value="weekly"
@@ -65,7 +68,7 @@
         </div>
         <div class="form-check form-check-inline">
             <input
-                class="form-check-input"
+                class="form-check-input {reportTypeValid ? '' : 'is-invalid'}"
                 type="radio"
                 id="selectorMonthly"
                 value="monthly"
@@ -79,12 +82,15 @@
             <Flatpickr
                 options={{ enableTime: false }}
                 bind:formattedValue={date}
-                class="form-control"
+                class="form-control {dateValid ? '' : 'is-invalid'}"
                 on:change={(dateStr) => {
                     date = dateStr;
                 }}
                 placeholder="Дата"
             />
+            {#if !dateValid || !reportTypeValid}
+                <div class="invalid-feedback">Данные не введены!</div>
+            {/if}
         </div>
         <div class="ms-3 mt-3">
             <button

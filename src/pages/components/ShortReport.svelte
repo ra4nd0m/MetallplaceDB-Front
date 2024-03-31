@@ -8,9 +8,11 @@
         secret = val;
     });
     let date: any;
-    let type: string;
+    let type: string = "Мировой рынок металлургического сырья";
     let downloading = false;
     let fields: inputField[] = [{ paragraphs: "", title: "", file: null }];
+    let fieldsValid = true;
+    let formSubmitted = false;
     function addField() {
         fields = [...fields, { paragraphs: "", title: "", file: null }];
     }
@@ -20,21 +22,14 @@
         }
     }
     async function handleSubmit() {
-        if (!date || !type) {
-            alert("Поля не заполнены!");
-            return;
-        }
-        for (const field of fields) {
-            if (!field.paragraphs || !field.title) {
-                alert("Поля не заполнены!");
-                return;
-            }
-        }
+        formSubmitted = true;
+        fieldsValid = fields.every((field) => field.paragraphs && field.title);
+        if (!fieldsValid) return;
         const processedFields = fields.map(async (field) => {
             let fileBytes: any = null;
             if (field.file) {
                 fileBytes = await toBase64(field.file[0]);
-                fileBytes = fileBytes.replace(/^data:.*\/.*;base64,/, '');
+                fileBytes = fileBytes.replace(/^data:.*\/.*;base64,/, "");
             }
             return {
                 ...field,
@@ -50,12 +45,13 @@
         console.log(payload);
         await getReport(JSON.stringify(payload));
     }
-    const toBase64 = (file:File)=>new Promise((res,rej) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload=()=>res(reader.result);
-        reader.onerror=rej;
-    });
+    const toBase64 = (file: File) =>
+        new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => res(reader.result);
+            reader.onerror = rej;
+        });
     async function getReport(payload: string) {
         try {
             downloading = true;
@@ -76,7 +72,6 @@
             link.click();
             downloading = false;
             window.URL.revokeObjectURL(url);
-            document.removeChild(link);
         } catch (err) {
             downloading = false;
         }
@@ -123,20 +118,34 @@
                 <div class="ms-3 mt-3">
                     <input
                         type="text"
-                        class="form-control"
+                        class="form-control {!field.title && formSubmitted
+                            ? 'is-invalid'
+                            : ''}"
                         placeholder="Заголовок"
                         style="width: 40vw"
                         bind:value={field.title}
                     />
+                    {#if !field.title && formSubmitted}
+                        <div class="invalid-feedback">
+                            Загаловок не заполнен!
+                        </div>
+                    {/if}
                 </div>
                 <div class="ms-3 mt-3">
                     <textarea
                         rows="5"
-                        class="form-control"
+                        class="form-control {!field.paragraphs && formSubmitted
+                            ? 'is-invalid'
+                            : ''}"
                         placeholder="Параграфы"
                         bind:value={field.paragraphs}
                         style="width: 40vw"
                     />
+                    {#if !field.paragraphs && formSubmitted}
+                        <div class="invalid-feedback">
+                            Параграфы не заполнены!
+                        </div>
+                    {/if}
                 </div>
                 <div class="ms-3 mt-3">
                     <!---->
