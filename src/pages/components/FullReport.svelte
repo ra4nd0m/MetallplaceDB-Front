@@ -88,6 +88,9 @@
                 }}
                 placeholder="Дата"
             />
+            {#if !dateValid || !reportTypeValid}
+                <div class="invalid-feedback">Данные не введены!</div>
+            {/if}
         </div>
         <div class="ms-3 mt-3">
             <button
