@@ -1,4 +1,5 @@
 import { push } from 'svelte-spa-router';
+import * as Sentry from '@sentry/svelte';
 
 export async function doFetch(payload: string, address: string, token: string, isNew?: boolean): Promise<fetchReturnType> {
     isNew = isNew || false;
@@ -22,6 +23,7 @@ export async function doFetch(payload: string, address: string, token: string, i
         ret_value = await resp.json();
         return ret_value;
     } catch (err) {
+        Sentry.captureException(err);
         alert(err);
         return '';
     }
