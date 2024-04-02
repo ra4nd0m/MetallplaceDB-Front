@@ -1,5 +1,6 @@
 <script lang="ts">
     import Flatpickr from "svelte-flatpickr";
+    import * as Sentry from '@sentry/svelte';
     import { token } from "../lib/stores";
     let reportType: string;
     let date: string | any;
@@ -43,6 +44,7 @@
             window.URL.revokeObjectURL(url);
         } catch (err) {
             alert(err);
+            Sentry.captureException(err);
             downloading = false;
         }
     }

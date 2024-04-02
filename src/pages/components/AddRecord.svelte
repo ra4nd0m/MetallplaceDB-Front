@@ -2,6 +2,7 @@
     import { doFetch, type matProp } from "../lib/getData";
     import Flatpickr from "svelte-flatpickr";
     import "flatpickr/dist/flatpickr.css";
+    import * as Sentry from '@sentry/svelte';
     export let mat_id: number;
     export let secret: string;
     let created_on: string | any;
@@ -59,6 +60,7 @@
                 await addRecord(JSON.stringify(payloadMaxPrice)),
             ]);
         } catch (err) {
+            Sentry.captureException(err);
             alert(err);
         }
     }

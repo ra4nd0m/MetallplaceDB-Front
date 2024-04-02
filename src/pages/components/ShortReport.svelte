@@ -2,6 +2,7 @@
     import Flatpickr from "svelte-flatpickr";
     import { token } from "../lib/stores";
     import { doFetch } from "../lib/getData";
+    import * as Sentry from '@sentry/svelte';
 
     let secret: string;
     token.subscribe((val) => {
@@ -73,6 +74,8 @@
             downloading = false;
             window.URL.revokeObjectURL(url);
         } catch (err) {
+            Sentry.captureException(err);
+            alert(err);
             downloading = false;
         }
     }
