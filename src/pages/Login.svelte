@@ -21,6 +21,11 @@
             })
             .then((data) => {
                 token.set(data.token);
+                const expiresIn = 3600 * 1000;
+                setTimeout(() => {
+                    token.set("");
+                    push("/login");
+                }, expiresIn);
                 push("/");
             })
             .catch((err) => alert(err));
