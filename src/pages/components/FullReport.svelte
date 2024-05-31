@@ -12,7 +12,6 @@
     async function getReport() {
         reportTypeValid = reportType !== undefined && reportType !== "";
         dateValid = date !== "";
-        console.log(dateValid, date)
         if (!reportTypeValid || !dateValid) {
             return;
         }
@@ -33,7 +32,6 @@
             if (!resp.ok) {
                 throw new Error(`HTTP error! status:${resp.status}`);
             }
-            console.log(resp);
             const blob = await resp.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
