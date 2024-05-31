@@ -43,7 +43,6 @@
             date: date,
             report_header: type,
         };
-        console.log(payload);
         await getReport(JSON.stringify(payload));
     }
     const toBase64 = (file: File) =>
