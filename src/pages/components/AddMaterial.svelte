@@ -35,7 +35,6 @@
             DeliveryType: delivery_type,
             Unit: unit,
         };
-        console.log(newMaterial);
         let errors = await validateInput(newMaterial);
         if (errors != 0) {
             alert("Ошибка!\nНе все поля заполнены!");
