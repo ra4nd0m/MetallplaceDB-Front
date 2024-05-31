@@ -9,7 +9,6 @@
 
   let secret:string;
   token.subscribe((val) => {
-    sessionStorage.setItem("token", val);
     secret = val;
   });
 </script>
