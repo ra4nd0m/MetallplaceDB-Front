@@ -21,9 +21,10 @@
             })
             .then((data) => {
                 token.set(data.token);
-                const expiresIn = 3600 * 1000;
+                const expiresIn = 7200 * 1000;
                 setTimeout(() => {
                     token.set("");
+                    alert("Сессия подошла к концу!\nТребуется перезайти!")
                     push("/login");
                 }, expiresIn);
                 push("/");
