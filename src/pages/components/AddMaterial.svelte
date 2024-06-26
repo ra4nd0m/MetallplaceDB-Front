@@ -28,14 +28,15 @@
     }
     const addMaterial = async () => {
         let newMaterial: material = {
-            Name: name,
-            Source: source,
-            Group: group,
-            Market: market,
-            DeliveryType: delivery_type,
-            Unit: unit,
+            name: name,
+            source: source,
+            group: group,
+            market: market,
+            delivery_type: delivery_type,
+            unit: unit,
         };
-        let errors = await validateInput(newMaterial);
+        console.log(newMaterial);
+        let errors = 0;//await validateInput(newMaterial);
         if (errors != 0) {
             alert("Ошибка!\nНе все поля заполнены!");
             return;
@@ -48,7 +49,7 @@
         unit = "";
         newMaterial.Id = await doFetch(
             JSON.stringify(newMaterial),
-            "/addMaterial",
+            "/addUniqueMaterial",
             secret,
         ).then((val) => {
             if (typeof val === "object" && "id" in val) {

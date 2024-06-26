@@ -49,12 +49,12 @@ export interface priceFeed {
 }
 export interface material {
     Id?: number;
-    Name: string;
-    Source: string;
-    Group: string;
-    Market: string;
-    DeliveryType: string;
-    Unit: string;
+    name: string;
+    source: string;
+    group: string;
+    market: string;
+    delivery_type: string;
+    unit: string;
 }
 
 export interface matProp {

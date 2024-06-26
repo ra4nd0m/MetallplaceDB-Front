@@ -7,7 +7,7 @@
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         let result = await doFetch(payload, "/getPropertyList", secret);
-        if (typeof result === "object" && "list" in result) {
+        if (typeof result === "object" && "list" in result && result.list !== null) {
             material_props_list = result.list as matProp[];
         } else {
             material_props_list = [];
