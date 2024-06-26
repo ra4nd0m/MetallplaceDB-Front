@@ -38,7 +38,6 @@
             if (prop.Id > 5 || prop.Id < 1) {
                 continue;
             }
-            console.log(prop);
             // Create the payload for the fetch request
             let payload = {
                 material_source_id: mat_id,
@@ -60,8 +59,11 @@
                     return [];
                 }
             })) as priceFeed[];
+            //Skip empty dates
+            if(value === null){
+                continue;
+            }
             // Format the date in each item of the value array
-
             value.forEach((item: { date: string }) => {
                 const buf = item.date.split("T");
                 item.date = buf[0];
@@ -75,7 +77,11 @@
                 initialData.flatMap((item) => item.map((obj) => obj.date)),
             ),
         ];
-
+        //If no recived dates are filled, alert and return
+        if(recivedDates.length === 0){
+            alert("Данные за указанный период не найдены!");
+            return;
+        };
         //Sort the recivedDates
         recivedDates.sort(
             (a, b) => new Date(a).getTime() - new Date(b).getTime(),
