@@ -35,10 +35,15 @@
             delivery_type: delivery_type,
             unit: unit,
         };
-        console.log(newMaterial);
-        let errors = 0;//await validateInput(newMaterial);
-        if (errors != 0) {
-            alert("Ошибка!\nНе все поля заполнены!");
+        if (
+            newMaterial.name.length === 0 ||
+            newMaterial.source.length === 0 ||
+            newMaterial.group.length === 0 ||
+            newMaterial.market.length === 0 ||
+            newMaterial.delivery_type.length === 0 ||
+            newMaterial.unit.length === 0
+        ) {
+            alert("Поля не заполнены!");
             return;
         }
         name = "";
