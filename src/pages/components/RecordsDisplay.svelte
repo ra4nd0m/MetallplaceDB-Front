@@ -11,6 +11,7 @@
     let finish_date = "";
     let propList: matProp[];
     let isTableFolded = false;
+    let monthsAgo = 3;
     // Fetch the list of properties when the component mounts
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
@@ -21,14 +22,21 @@
                 }
             })) || [];
         if (bShowLastRecords) {
-            const today = new Date();
-            finish_date = today.toISOString().split("T")[0];
-            start_date = new Date(today.setMonth(today.getMonth() - 3))
-                .toISOString()
-                .split("T")[0];
+            recalcDates();
             await getAllRecords();
         }
     });
+
+    function recalcDates() {
+        const today = new Date();
+        finish_date = today.toISOString().split("T")[0];
+        start_date = new Date(today.setMonth(today.getMonth() - monthsAgo))
+            .toISOString()
+            .split("T")[0];
+    }
+
+    $: monthsAgo, recalcDates(), getAllRecords();
+
     function extractDates(dates: string) {
         const buf = dates.split(" ");
         start_date = buf[0];
@@ -160,6 +168,20 @@
             </div>
         </div>
     {/if}
+    {#if bShowLastRecords}
+        <div class="d-flex justify-content-center">
+            <label class="form-label" for="monthsAgoId"
+                >Месяцов от текущей даты
+            </label>
+            <input
+                class=" ms-3 from-control"
+                id="monthsAgoId"
+                type="number"
+                min="1"
+                bind:value={monthsAgo}
+            />
+        </div>
+    {/if}
     <div>
         <button
             class="btn btn-primary mt-3"
@@ -195,4 +217,12 @@
             </table>
         {/if}
     </div>
+    {#if bShowLastRecords}
+        <div class="d-flex justify-content-center">
+            <label class="form-label" for="monthsAgoId"
+                >Месяцов от текущей даты
+            </label>
+            <input class="ms-3" type="number" min="1" bind:value={monthsAgo} />
+        </div>
+    {/if}
 </div>
