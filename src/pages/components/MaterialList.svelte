@@ -77,10 +77,9 @@
         filteredData[id].expanded = !filteredData[id].expanded;
     }
     $: {
-
-            filteredData = tableData?.filter((item) =>
-                item.Name.toLowerCase().includes(search_item.toLowerCase()),
-            );
+        filteredData = tableData?.filter((item) =>
+            item.Name.toLowerCase().includes(search_item.toLowerCase()),
+        );
 
         if (selectedFilters.source != "")
             filteredData = filteredData.filter((item) => {
@@ -183,6 +182,12 @@
         />
         <!--Filters-->
         <div class="row" style="padding-top: 1%;">
+            <div class="col">
+                <select class="form-select" disabled>Наименование</select>
+            </div>
+            <div class="col">
+                <select class="form-select" disabled>Наименование</select>
+            </div>
             <div class="col">
                 <select bind:value={selectedFilters.source} class="form-select">
                     <option value="">Источник данных</option>
