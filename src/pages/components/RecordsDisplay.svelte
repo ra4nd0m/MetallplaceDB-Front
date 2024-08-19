@@ -12,6 +12,7 @@
     let propList: matProp[];
     let isTableFolded = false;
     let monthsAgo = 3;
+    let fetchFired = false;
     // Fetch the list of properties when the component mounts
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
@@ -21,6 +22,8 @@
                     return val.list as matProp[];
                 }
             })) || [];
+
+        fetchFired = true;
         if (bShowLastRecords) {
             recalcDates();
             await getAllRecords();
@@ -35,7 +38,12 @@
             .split("T")[0];
     }
 
-    $: monthsAgo, recalcDates(), getAllRecords();
+    $: {
+        if (fetchFired && bShowLastRecords && monthsAgo) {
+            recalcDates();
+            getAllRecords();
+        }
+    }
 
     function extractDates(dates: string) {
         const buf = dates.split(" ");
