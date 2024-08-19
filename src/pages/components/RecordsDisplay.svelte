@@ -99,6 +99,28 @@
             // Add the value array to the initialData array
             initialData.push(value);
         }
+        let payloadAvg = {
+            material_source_id: mat_id,
+            property_id: 1,
+            start: start_date,
+            finish: finish_date,
+        };
+        let valuesAvg = (await doFetch(
+            JSON.stringify(payloadAvg),
+            "/getMonthlyAvgFeed",
+            secret,
+        ).then((val) => {
+            if (typeof val === "object" && "price_feed" in val) {
+                return val.price_feed;
+            } else {
+                return [];
+            }
+        })) as priceFeed[];
+        valuesAvg.forEach((item: { date: string }) => {
+            const buf = item.date.split("T");
+            item.date = buf[0];
+        });
+        initialData.push(valuesAvg);
         // Create a new array of unique dates from the initialData array
         let recivedDates = [
             ...new Set(
@@ -151,6 +173,7 @@
         value3?: string;
         value4?: string;
         value5?: string;
+        value6?: string;
     }
 </script>
 
@@ -205,8 +228,11 @@
                         {#if typeof propList !== "undefined" && dataList.length !== 0}
                             <th>Дата</th>
                             {#each propList as prop}
-                                <th>{prop.Name}</th>
+                                {#if prop.Name !== ""}
+                                    <th>{prop.Name}</th>
+                                {/if}
                             {/each}
+                            <th>Среднее значение за месяц</th>
                         {/if}
                     </tr>
                 </thead>
@@ -219,6 +245,7 @@
                             <td>{item.value3 ? item.value3 : ""}</td>
                             <td>{item.value4 ? item.value4 : ""}</td>
                             <td>{item.value5 ? item.value5 : ""}</td>
+                            <td>{item.value6 ? item.value6 : ""}</td>
                         </tr>
                     {/each}
                 </tbody>
