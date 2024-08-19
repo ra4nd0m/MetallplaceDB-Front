@@ -143,6 +143,11 @@
                     (a.DeliveryType || "").localeCompare(b.DeliveryType || ""),
                 );
                 break;
+            case "update_date":
+                filteredData = filteredData.sort((a, b) =>
+                    (a.update_date || "").localeCompare(b.update_date || ""),
+                );
+                break;
         }
         if (sortDirection === `desc`) {
             filteredData = filteredData.reverse();
@@ -164,6 +169,7 @@
         Market: string;
         Source: string;
         Unit: string;
+        update_date?: string;
         [key: string]: any;
     }
     interface dataTableObjectExtended extends dataTableObject {
@@ -260,7 +266,9 @@
                             >Тип поставки</th
                         >
                         <th on:click={() => sortTable("Unit")}>Еденица</th>
-                        <th />
+                        <th on:click={() => sortTable("update_date")}
+                            >Дата обновления</th
+                        >
                         <th />
                     </tr>
                 </thead>
@@ -274,6 +282,7 @@
                             <td>{row.Market}</td>
                             <td>{row.DeliveryType}</td>
                             <td>{row.Unit}</td>
+                            <td>{row.update_date}</td>
                             <td
                                 ><button
                                     class="btn btn-secondary"
