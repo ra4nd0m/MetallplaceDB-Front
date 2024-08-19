@@ -2,7 +2,8 @@
     import { doFetch, type matProp } from "../lib/getData";
     import Flatpickr from "svelte-flatpickr";
     import "flatpickr/dist/flatpickr.css";
-    import * as Sentry from '@sentry/svelte';
+    import * as Sentry from "@sentry/svelte";
+    import RecordsDisplay from "./RecordsDisplay.svelte";
     export let mat_id: number;
     export let secret: string;
     let created_on: string | any;
@@ -73,6 +74,7 @@
     }
 </script>
 
+<RecordsDisplay {mat_id} {secret} bShowLastRecords={true} />
 <div class="d-flex justify-content-center">
     <form
         on:submit|preventDefault={async () => {

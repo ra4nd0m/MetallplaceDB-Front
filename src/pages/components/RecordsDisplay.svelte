@@ -5,10 +5,14 @@
     import Flatpickr from "svelte-flatpickr";
     export let mat_id: number;
     export let secret: string;
+    export let bShowLastRecords: boolean;
     let dates: string;
     let start_date: string;
     let finish_date = "";
     let propList: matProp[];
+    let isTableFolded = false;
+    let monthsAgo = 3;
+    let fetchFired = false;
     // Fetch the list of properties when the component mounts
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
@@ -18,7 +22,29 @@
                     return val.list as matProp[];
                 }
             })) || [];
+
+        fetchFired = true;
+        if (bShowLastRecords) {
+            recalcDates();
+            await getAllRecords();
+        }
     });
+
+    function recalcDates() {
+        const today = new Date();
+        finish_date = today.toISOString().split("T")[0];
+        start_date = new Date(today.setMonth(today.getMonth() - monthsAgo))
+            .toISOString()
+            .split("T")[0];
+    }
+
+    $: {
+        if (fetchFired && bShowLastRecords && monthsAgo) {
+            recalcDates();
+            getAllRecords();
+        }
+    }
+
     function extractDates(dates: string) {
         const buf = dates.split(" ");
         start_date = buf[0];
@@ -31,7 +57,9 @@
     async function getAllRecords() {
         // Extract the start and finish dates from the dates string
         let initialData: dateValuePair[][] = [];
-        extractDates(dates);
+        if (!bShowLastRecords) {
+            extractDates(dates);
+        }
         // Loop over each property in the propList
         for (const prop of propList) {
             //Check for bad props and skip if found
@@ -60,7 +88,7 @@
                 }
             })) as priceFeed[];
             //Skip empty dates
-            if(value === null){
+            if (value === null) {
                 continue;
             }
             // Format the date in each item of the value array
@@ -78,10 +106,10 @@
             ),
         ];
         //If no recived dates are filled, alert and return
-        if(recivedDates.length === 0){
+        if (recivedDates.length === 0) {
             alert("Данные за указанный период не найдены!");
             return;
-        };
+        }
         //Sort the recivedDates
         recivedDates.sort(
             (a, b) => new Date(a).getTime() - new Date(b).getTime(),
@@ -106,6 +134,11 @@
             return object as dataListToDisplay;
         });
     }
+
+    function toggleTableFold() {
+        isTableFolded = !isTableFolded;
+    }
+
     type dateValuePair = {
         date: string;
         value: number;
@@ -122,49 +155,82 @@
 </script>
 
 <div>
-    <div class="d-flex justify-content-center">
-        <div class="ms-3 mt-3">
-            <Flatpickr
-                options={{ enableTime: false, mode: "range" }}
-                bind:formattedValue={dates}
-                class="form-control"
-                placeholder="Дата"
+    {#if !bShowLastRecords}
+        <div class="d-flex justify-content-center">
+            <div class="ms-3 mt-3">
+                <Flatpickr
+                    options={{ enableTime: false, mode: "range" }}
+                    bind:formattedValue={dates}
+                    class="form-control"
+                    placeholder="Дата"
+                />
+            </div>
+            <div class="ms-3 mt-3">
+                <button
+                    class="btn btn-primary"
+                    disabled={!dateFilled}
+                    on:click={async () => {
+                        await getAllRecords();
+                    }}>Загрузить</button
+                >
+            </div>
+        </div>
+    {/if}
+    {#if bShowLastRecords}
+        <div class="d-flex justify-content-center">
+            <label class="form-label" for="monthsAgoId"
+                >Месяцов от текущей даты
+            </label>
+            <input
+                class=" ms-3 from-control"
+                id="monthsAgoId"
+                type="number"
+                min="1"
+                bind:value={monthsAgo}
             />
         </div>
-        <div class="ms-3 mt-3">
-            <button
-                class="btn btn-primary"
-                disabled={!dateFilled}
-                on:click={async () => {
-                    await getAllRecords();
-                }}>Загрузить</button
-            >
-        </div>
-    </div>
+    {/if}
     <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    {#if typeof propList !== "undefined" && dataList.length !== 0}
-                        <th>Дата</th>
-                        {#each propList as prop}
-                            <th>{prop.Name}</th>
-                        {/each}
-                    {/if}
-                </tr>
-            </thead>
-            <tbody>
-                {#each dataList as item}
+        <button
+            class="btn btn-primary mt-3"
+            on:click={() => {
+                toggleTableFold();
+            }}
+            >{#if isTableFolded}Развернуть таблицу{:else}Свернуть таблицу{/if}</button
+        >
+        {#if !isTableFolded}
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>{item.date}</td>
-                        <td>{item.value1 ? item.value1 : ""}</td>
-                        <td>{item.value2 ? item.value2 : ""}</td>
-                        <td>{item.value3 ? item.value3 : ""}</td>
-                        <td>{item.value4 ? item.value4 : ""}</td>
-                        <td>{item.value5 ? item.value5 : ""}</td>
+                        {#if typeof propList !== "undefined" && dataList.length !== 0}
+                            <th>Дата</th>
+                            {#each propList as prop}
+                                <th>{prop.Name}</th>
+                            {/each}
+                        {/if}
                     </tr>
-                {/each}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {#each dataList as item}
+                        <tr>
+                            <td>{item.date}</td>
+                            <td>{item.value1 ? item.value1 : ""}</td>
+                            <td>{item.value2 ? item.value2 : ""}</td>
+                            <td>{item.value3 ? item.value3 : ""}</td>
+                            <td>{item.value4 ? item.value4 : ""}</td>
+                            <td>{item.value5 ? item.value5 : ""}</td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        {/if}
     </div>
+    {#if bShowLastRecords}
+        <div class="d-flex justify-content-center">
+            <label class="form-label" for="monthsAgoId"
+                >Месяцов от текущей даты
+            </label>
+            <input class="ms-3" type="number" min="1" bind:value={monthsAgo} />
+        </div>
+    {/if}
 </div>
