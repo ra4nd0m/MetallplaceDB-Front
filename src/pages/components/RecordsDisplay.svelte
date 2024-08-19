@@ -224,6 +224,15 @@
                 </tbody>
             </table>
         {/if}
+        {#if !isTableFolded}
+            <button
+                class="btn btn-primary mt-3"
+                on:click={() => {
+                    toggleTableFold();
+                }}
+                >{#if isTableFolded}Развернуть таблицу{:else}Свернуть таблицу{/if}</button
+            >
+        {/if}
     </div>
     {#if bShowLastRecords}
         <div class="d-flex justify-content-center">
