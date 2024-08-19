@@ -77,7 +77,7 @@
         filteredData[id].expanded = !filteredData[id].expanded;
     }
     $: {
-        if(search_item !== ""){
+        if (search_item !== "") {
             filteredData = tableData?.filter((item) =>
                 item.Name.toLowerCase().includes(search_item.toLowerCase()),
             );
@@ -297,6 +297,7 @@
                                             <RecordsDisplay
                                                 {secret}
                                                 mat_id={row.Id}
+                                                bShowLastRecords={false}
                                             />
                                         {/if}
                                     </SubmenuSwitch>
