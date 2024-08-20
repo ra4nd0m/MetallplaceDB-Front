@@ -14,6 +14,7 @@
     let monthsAgo = 3;
     let fetchFired = false;
     let isAvgChecked = true;
+    let maxIndexArr: any[] = [];
     // Fetch the list of properties when the component mounts
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
@@ -62,6 +63,7 @@
     async function getAllRecords() {
         // Extract the start and finish dates from the dates string
         let initialData: dateValuePair[][] = [];
+        let isFetchAttempted = false;
         if (!bShowLastRecords) {
             extractDates(dates);
         }
@@ -74,6 +76,7 @@
             if (!prop.isSelected) {
                 continue;
             }
+            isFetchAttempted = true;
             // Create the payload for the fetch request
             let payload = {
                 material_source_id: mat_id,
@@ -108,6 +111,7 @@
             initialData.push(value);
         }
         if (isAvgChecked) {
+            isFetchAttempted = true;
             let payloadAvg = {
                 material_source_id: mat_id,
                 property_id: 1,
@@ -138,15 +142,16 @@
             ),
         ];
         //If no recived dates are filled, alert and return
-        if (recivedDates.length === 0) {
+        if (isFetchAttempted && recivedDates.length === 0) {
             alert("Данные за указанный период не найдены!");
+            dataList = [];
             return;
         }
         //Sort the recivedDates
         recivedDates.sort(
             (a, b) => new Date(a).getTime() - new Date(b).getTime(),
         );
-
+        let maxReachedIndex = 0;
         // Map over each date in recivedDates to create a new object for each date
         // Each object contains the date and the corresponding values from the initialData array
         dataList = recivedDates.map((item) => {
@@ -160,12 +165,16 @@
                 let valObj = arr.find((obj) => obj.date === item);
                 // If an object with the same date is found, add its value to the new object
                 // Otherwise, add an empty string
+                if (index + 1 > maxReachedIndex) {
+                    maxReachedIndex = index + 1;
+                }
                 object[`value${index + 1}`] = valObj ? valObj.value : "";
             });
             // Return the new object as an item in the dataList array
             return object as dataListToDisplay;
         });
-        console.log(dataList);
+        maxIndexArr = Array.from({ length: maxReachedIndex });
+        console.log(maxReachedIndex, dataList, maxIndexArr);
     }
 
     function toggleTableFold() {
@@ -189,14 +198,12 @@
         value: number;
     };
     $: dateFilled = dates !== "";
+    interface valueProperty {
+        [key: string]: string | number | undefined;
+    }
     interface dataListToDisplay {
         date: string;
-        value1?: string;
-        value2?: string;
-        value3?: string;
-        value4?: string;
-        value5?: string;
-        value6?: string;
+        [key: string]: valueProperty[keyof valueProperty];
     }
 </script>
 
@@ -296,12 +303,9 @@
                     {#each dataList as item}
                         <tr>
                             <td>{item.date}</td>
-                            <td>{item.value1 ? item.value1 : ""}</td>
-                            <td>{item.value2 ? item.value2 : ""}</td>
-                            <td>{item.value3 ? item.value3 : ""}</td>
-                            <td>{item.value4 ? item.value4 : ""}</td>
-                            <td>{item.value5 ? item.value5 : ""}</td>
-                            <td>{item.value6 ? item.value6 : ""}</td>
+                            {#each maxIndexArr as _, i}
+                                <td>{item[`value${i + 1}`]}</td>
+                            {/each}
                         </tr>
                     {/each}
                 </tbody>
