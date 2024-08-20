@@ -174,7 +174,6 @@
             return object as dataListToDisplay;
         });
         maxIndexArr = Array.from({ length: maxReachedIndex });
-        console.log(maxReachedIndex, dataList, maxIndexArr);
     }
 
     function toggleTableFold() {
