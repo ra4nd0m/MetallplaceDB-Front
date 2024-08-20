@@ -32,8 +32,8 @@ export async function doFetch(payload: string, address: string, token: string, i
 type fetchReturnType = responseId | responseList | priceFeed[] | succsessType | Response | string;
 
 
-interface succsessType{
-    succsess:boolean;
+interface succsessType {
+    succsess: boolean;
 }
 
 interface responseId {
@@ -62,4 +62,5 @@ export interface matProp {
     Id: number;
     Name: string;
     Kind: string;
+    isSelected?: boolean;
 }

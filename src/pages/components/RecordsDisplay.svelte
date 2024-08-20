@@ -9,7 +9,7 @@
     let dates: string;
     let start_date: string;
     let finish_date = "";
-    let propList: matProp[];
+    let propList: matProp[]  =[];
     let isTableFolded = false;
     let monthsAgo = 3;
     let fetchFired = false;
@@ -22,7 +22,7 @@
                     return val.list as matProp[];
                 }
             })) || [];
-
+        propList.forEach((val) => (val.isSelected = false));
         fetchFired = true;
         if (bShowLastRecords) {
             recalcDates();
@@ -63,7 +63,10 @@
         // Loop over each property in the propList
         for (const prop of propList) {
             //Check for bad props and skip if found
-            if (prop.Id > 5 || prop.Id < 1) {
+            if (prop.Id > 6 || prop.Id < 1) {
+                continue;
+            }
+            if(!prop.isSelected){
                 continue;
             }
             // Create the payload for the fetch request
@@ -161,6 +164,10 @@
         isTableFolded = !isTableFolded;
     }
 
+    $:{
+        console.log(propList);
+    }
+
     type dateValuePair = {
         date: string;
         value: number;
@@ -178,6 +185,26 @@
 </script>
 
 <div>
+    <div>
+        <div class="d-flex justify-content-center from-check">
+            {#if fetchFired}
+                {#each propList as prop}
+                    {#if prop.Id <= 6}
+                        <label class="from-check-label ms-3" for={prop.Name}
+                            >{prop.Name}</label
+                        >
+                        <input
+                            type="checkbox"
+                            class="from-check-input ms-2"
+                            id={prop.Name}
+                            value={prop.Id}
+                            bind:checked={prop.isSelected}
+                        />
+                    {/if}
+                {/each}
+            {/if}
+        </div>
+    </div>
     {#if !bShowLastRecords}
         <div class="d-flex justify-content-center">
             <div class="ms-3 mt-3">
