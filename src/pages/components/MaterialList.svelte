@@ -209,8 +209,8 @@
                     </tr>
                     <tr>
                         <!--Filters-->
-                        <th></th>
-                        <th></th>
+                        <th />
+                        <th />
                         <th
                             ><select
                                 bind:value={selectedFilters.source}
@@ -270,13 +270,12 @@
                                 {/each}
                             </select></th
                         >
-                        <th />
-                        <th
+                        <th colspan="2" style="text-align: end;"
                             ><button
                                 class="btn btn-secondary"
                                 on:click={() => resetFilters()}
                             >
-                                Сбросить
+                                Сбросить фильтры
                             </button></th
                         >
                     </tr>
