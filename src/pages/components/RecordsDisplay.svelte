@@ -202,7 +202,7 @@
 
 <div>
     <div>
-        <div class="d-flex justify-content-center from-check">
+        <div class="d-flex justify-content-center from-check mt-3">
             {#if fetchFired}
                 {#each propList as prop}
                     {#if prop.Id <= 6}
@@ -211,7 +211,7 @@
                         >
                         <input
                             type="checkbox"
-                            class="from-check-input ms-2"
+                            class="from-check-input ms-1"
                             id={prop.Name}
                             value={prop.Id}
                             bind:checked={prop.isSelected}
