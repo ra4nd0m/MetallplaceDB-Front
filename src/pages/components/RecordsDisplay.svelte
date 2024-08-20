@@ -9,10 +9,11 @@
     let dates: string;
     let start_date: string;
     let finish_date = "";
-    let propList: matProp[]  =[];
+    let propList: matProp[] = [];
     let isTableFolded = false;
     let monthsAgo = 3;
     let fetchFired = false;
+    let isAvgChecked = true;
     // Fetch the list of properties when the component mounts
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
@@ -22,7 +23,9 @@
                     return val.list as matProp[];
                 }
             })) || [];
-        propList.forEach((val) => (val.isSelected = false));
+        propList.forEach(
+            (val) => (val.isSelected = preheckdProps.includes(val.Name)),
+        );
         fetchFired = true;
         if (bShowLastRecords) {
             recalcDates();
@@ -39,7 +42,8 @@
     }
 
     $: {
-        if (fetchFired && bShowLastRecords && monthsAgo) {
+        isAvgChecked;
+        if (fetchFired && bShowLastRecords && monthsAgo && propList) {
             recalcDates();
             getAllRecords();
         }
@@ -51,6 +55,7 @@
         finish_date = buf[2];
     }
     let dataList: dataListToDisplay[] = [];
+    let preheckdProps = ["Средняя цена", "Прогноз месяц"];
 
     //Not good
     //Backend support should work better
@@ -66,7 +71,7 @@
             if (prop.Id > 6 || prop.Id < 1) {
                 continue;
             }
-            if(!prop.isSelected){
+            if (!prop.isSelected) {
                 continue;
             }
             // Create the payload for the fetch request
@@ -102,28 +107,30 @@
             // Add the value array to the initialData array
             initialData.push(value);
         }
-        let payloadAvg = {
-            material_source_id: mat_id,
-            property_id: 1,
-            start: start_date,
-            finish: finish_date,
-        };
-        let valuesAvg = (await doFetch(
-            JSON.stringify(payloadAvg),
-            "/getMonthlyAvgFeed",
-            secret,
-        ).then((val) => {
-            if (typeof val === "object" && "price_feed" in val) {
-                return val.price_feed;
-            } else {
-                return [];
-            }
-        })) as priceFeed[];
-        valuesAvg.forEach((item: { date: string }) => {
-            const buf = item.date.split("T");
-            item.date = buf[0];
-        });
-        initialData.push(valuesAvg);
+        if (isAvgChecked) {
+            let payloadAvg = {
+                material_source_id: mat_id,
+                property_id: 1,
+                start: start_date,
+                finish: finish_date,
+            };
+            let valuesAvg = (await doFetch(
+                JSON.stringify(payloadAvg),
+                "/getMonthlyAvgFeed",
+                secret,
+            ).then((val) => {
+                if (typeof val === "object" && "price_feed" in val) {
+                    return val.price_feed;
+                } else {
+                    return [];
+                }
+            })) as priceFeed[];
+            valuesAvg.forEach((item: { date: string }) => {
+                const buf = item.date.split("T");
+                item.date = buf[0];
+            });
+            initialData.push(valuesAvg);
+        }
         // Create a new array of unique dates from the initialData array
         let recivedDates = [
             ...new Set(
@@ -158,14 +165,23 @@
             // Return the new object as an item in the dataList array
             return object as dataListToDisplay;
         });
+        console.log(dataList);
     }
 
     function toggleTableFold() {
         isTableFolded = !isTableFolded;
     }
 
-    $:{
-        console.log(propList);
+    $: {
+        propList;
+        isAvgChecked;
+        if (
+            start_date !== "" &&
+            typeof start_date !== "undefined" &&
+            !bShowLastRecords
+        ) {
+            getAllRecords();
+        }
     }
 
     type dateValuePair = {
@@ -202,6 +218,15 @@
                         />
                     {/if}
                 {/each}
+                <label class="from-check-label ms-3" for="avgCheck"
+                    >Среднее значение за месяц</label
+                >
+                <input
+                    type="checkbox"
+                    class="from-check-input ms-2"
+                    id="avgCheck"
+                    bind:checked={isAvgChecked}
+                />
             {/if}
         </div>
     </div>
@@ -257,11 +282,13 @@
                         {#if typeof propList !== "undefined" && dataList.length !== 0}
                             <th>Дата</th>
                             {#each propList as prop}
-                                {#if prop.Name !== ""}
+                                {#if prop.Name !== "" && prop.isSelected}
                                     <th>{prop.Name}</th>
                                 {/if}
                             {/each}
-                            <th>Среднее значение за месяц</th>
+                            {#if isAvgChecked}
+                                <th>Среднее значение за месяц</th>
+                            {/if}
                         {/if}
                     </tr>
                 </thead>
