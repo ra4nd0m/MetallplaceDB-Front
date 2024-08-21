@@ -4,65 +4,51 @@
     import "flatpickr/dist/flatpickr.css";
     import * as Sentry from "@sentry/svelte";
     import RecordsDisplay from "./RecordsDisplay.svelte";
+    import { onMount } from "svelte";
     export let mat_id: number;
     export let secret: string;
     let created_on: string | any;
-    let minPrice: string | number;
-    let maxPrice: number | string;
-    let avgPrice: number | string;
-    //Works only when prop ids are static
-    //Better to utilise backend functionality
+    let propValuePairs: propValuePair[] = [];
+    let isPropsFetched = false;
 
-    function calculateAvgPrice() {
-        if (typeof minPrice != "undefined" && typeof maxPrice != "undefined") {
-            avgPrice = (Number(minPrice) + Number(maxPrice)) / 2;
-        }
-    }
+    let propList: matProp[] = [];
+    onMount(async () => {
+        let payload = JSON.stringify({ material_source_id: `${mat_id}` });
+        propList =
+            (await doFetch(payload, "/getPropertyList", secret).then((val) => {
+                if (typeof val === "object" && "list" in val) {
+                    return val.list as matProp[];
+                }
+            })) || [];
+        propList.forEach((prop) => {
+            if (prop.Name !== "") {
+                propValuePairs.push({ propName: prop.Name });
+            }
+        });
+        isPropsFetched = true;
+    });
+
     async function submitRecord() {
-        //Works only when prop ids are static
-        //Better to utilise backend functionality
-        let alertMessage = "";
-        if (created_on === "") alertMessage += "Дата не задана!\n";
-
-        if (typeof minPrice === "undefined" || minPrice === "")
-            alertMessage += "Минимальная цена не задана!\n";
-
-        if (typeof maxPrice === "undefined" || maxPrice === "")
-            alertMessage += "Максимальная цена не задана!\n";
-        if (alertMessage !== "") {
-            alert(alertMessage);
+        if (created_on === "") {
+            alert("Дата не задана!");
             return;
         }
-        let payloadAvgPrice = {
-            material_source_id: mat_id,
-            property_name: "Средняя цена",
-            value_float: `${avgPrice}`,
-            value_str: `${avgPrice}`,
-            created_on: created_on,
-        };
-        let payloadMinPrice = {
-            material_source_id: mat_id,
-            property_name: "Мин цена",
-            value_float: `${minPrice}`,
-            value_str: `${minPrice}`,
-            created_on: created_on,
-        };
-        let payloadMaxPrice = {
-            material_source_id: mat_id,
-            property_name: "Макс цена",
-            value_float: `${maxPrice}`,
-            value_str: `${maxPrice}`,
-            created_on: created_on,
-        };
-        try {
-            await Promise.all([
-                await addRecord(JSON.stringify(payloadAvgPrice)),
-                await addRecord(JSON.stringify(payloadMinPrice)),
-                await addRecord(JSON.stringify(payloadMaxPrice)),
-            ]);
-        } catch (err) {
-            Sentry.captureException(err);
-            alert(err);
+        for (const propPair of propValuePairs) {
+            if (propPair.propValue !== undefined && propPair.propValue !== "") {
+                const payload = {
+                    material_source_id: mat_id,
+                    property_name: `${propPair.propName}`,
+                    value_float: `${propPair.propValue}`,
+                    value_str: `${propPair.propValue}`,
+                    created_on: created_on,
+                };
+                try {
+                    await addRecord(JSON.stringify(payload));
+                } catch (err) {
+                    Sentry.captureException(err);
+                    alert(err);
+                }
+            }
         }
     }
     async function addRecord(payload: string) {
@@ -71,6 +57,39 @@
             throw new Error("Ошибка внутреннего сервиса!");
         }
         return;
+    }
+
+    $: {
+        if (isPropsFetched) {
+            const minPriceIndex = propValuePairs.findIndex(
+                (pair) => pair.propName === "Мин цена",
+            );
+            const maxPriceIndex = propValuePairs.findIndex(
+                (pair) => pair.propName === "Макс цена",
+            );
+            if (
+                minPriceIndex !== -1 &&
+                maxPriceIndex !== -1 &&
+                propValuePairs[minPriceIndex].propValue !== undefined &&
+                propValuePairs[maxPriceIndex].propValue !== undefined
+            ) {
+                const avgPrice =
+                    (Number(propValuePairs[minPriceIndex].propValue) +
+                        Number(propValuePairs[maxPriceIndex].propValue)) /
+                    2;
+                const avgPriceIndex = propValuePairs.findIndex(
+                    (pair) => pair.propName === "Средняя цена",
+                );
+                if (avgPriceIndex !== -1) {
+                    propValuePairs[avgPriceIndex].propValue = avgPrice;
+                }
+            }
+        }
+    }
+
+    interface propValuePair {
+        propName: string;
+        propValue?: string | number;
     }
 </script>
 
@@ -81,34 +100,18 @@
             await submitRecord();
         }}
     >
-        <div class="ms-3 mt-3">
-            <input
-                type="text"
-                class="form-control"
-                placeholder="Мин цена"
-                bind:value={minPrice}
-                on:input={() => calculateAvgPrice()}
-            />
-        </div>
-        <div class="ms-3 mt-3">
-            <input
-                type="text"
-                class="form-control"
-                placeholder="Макс цена"
-                bind:value={maxPrice}
-                on:input={() => calculateAvgPrice()}
-            />
-        </div>
-        <div class="ms-3 mt-3">
-            <input
-                type="text"
-                class="form-control"
-                placeholder="Средняя цена"
-                bind:value={avgPrice}
-                disabled
-            />
-        </div>
-
+        {#if isPropsFetched}
+            {#each propValuePairs as propPair}
+                <div class="ms-3 mt-3">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder={propPair.propName}
+                        bind:value={propPair.propValue}
+                    />
+                </div>
+            {/each}
+        {/if}
         <div class="ms-3 mt-3">
             <Flatpickr
                 options={{ enableTime: false }}
