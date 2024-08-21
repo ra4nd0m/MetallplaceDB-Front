@@ -81,7 +81,11 @@
                     (pair) => pair.propName === "Средняя цена",
                 );
                 if (avgPriceIndex !== -1) {
-                    propValuePairs[avgPriceIndex].propValue = avgPrice;
+                    if (avgPrice === 0) {
+                        propValuePairs[avgPriceIndex].propValue = "";
+                    } else {
+                        propValuePairs[avgPriceIndex].propValue = avgPrice;
+                    }
                 }
             }
         }
