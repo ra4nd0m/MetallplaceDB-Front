@@ -55,6 +55,7 @@ export interface material {
     market: string;
     delivery_type: string;
     unit: string;
+    update_date?: string;
 }
 
 export interface matProp {
