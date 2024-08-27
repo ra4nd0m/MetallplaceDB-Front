@@ -214,13 +214,15 @@
         </div>
     {/if}
     <div>
-        <button
-            class="btn btn-primary mt-3"
-            on:click={() => {
-                toggleTableFold();
-            }}
-            >{#if isTableFolded}Развернуть таблицу{:else}Свернуть таблицу{/if}</button
-        >
+        {#if bShowLastRecords}
+            <button
+                class="btn btn-primary mb-3"
+                on:click={() => {
+                    toggleTableFold();
+                }}
+                >{#if isTableFolded}Развернуть таблицу{:else}Свернуть таблицу{/if}</button
+            >
+        {/if}
         {#if !isTableFolded}
             <table class="table">
                 <thead>
@@ -251,9 +253,9 @@
                 </tbody>
             </table>
         {/if}
-        {#if !isTableFolded}
+        {#if !isTableFolded && bShowLastRecords}
             <button
-                class="btn btn-primary mt-3"
+                class="btn btn-primary"
                 on:click={() => {
                     toggleTableFold();
                 }}
@@ -261,7 +263,7 @@
             >
         {/if}
     </div>
-    {#if bShowLastRecords}
+    {#if bShowLastRecords && !isTableFolded}
         <div class="d-flex justify-content-center">
             <label class="form-label" for="monthsAgoId"
                 >Месяцов от текущей даты

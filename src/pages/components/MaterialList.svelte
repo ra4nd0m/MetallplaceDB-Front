@@ -186,70 +186,6 @@
             class="form-control"
             bind:value={search_item}
         />
-        <!--Filters-->
-        <div class="row" style="padding-top: 1%;">
-            <div class="col">
-                <select class="form-select" disabled>Наименование</select>
-            </div>
-            <div class="col">
-                <select class="form-select" disabled>Наименование</select>
-            </div>
-            <div class="col">
-                <select bind:value={selectedFilters.source} class="form-select">
-                    <option value="">Источник данных</option>
-                    {#each filterItems.Source as item}
-                        <option value={item}>{item}</option>
-                    {/each}
-                </select>
-            </div>
-            <div class="col">
-                <select bind:value={selectedFilters.group} class="form-select">
-                    <option value="">Группа</option>
-                    {#each filterItems.Group as item}
-                        <option value={item}>{item}</option>
-                    {/each}
-                </select>
-            </div>
-            <div class="col">
-                <select bind:value={selectedFilters.market} class="form-select">
-                    <option value="">Рынок</option>
-                    {#each filterItems.Market as item}
-                        <option value={item}>{item}</option>
-                    {/each}
-                </select>
-            </div>
-            <div class="col">
-                <select
-                    bind:value={selectedFilters.deliveryType}
-                    class="form-select"
-                >
-                    <option value="">Тип поставки</option>
-                    {#each filterItems.DeliveryType as item}
-                        {#if !item}
-                            <option value="0">Не указан</option>
-                        {:else}
-                            <option value={item}>{item}</option>
-                        {/if}
-                    {/each}
-                </select>
-            </div>
-            <div class="col">
-                <select bind:value={selectedFilters.unit} class="form-select">
-                    <option value="">Единица</option>
-                    {#each filterItems.Unit as item}
-                        <option value={item}>{item}</option>
-                    {/each}
-                </select>
-            </div>
-            <div class="col">
-                <button
-                    class="btn btn-secondary"
-                    on:click={() => resetFilters()}
-                >
-                    Сбросить фильтры
-                </button>
-            </div>
-        </div>
         <!--Table-->
         <div style="padding-top: 1%;">
             <table class="table table-responsive">
@@ -270,6 +206,78 @@
                             >Дата обновления</th
                         >
                         <th />
+                    </tr>
+                    <tr>
+                        <!--Filters-->
+                        <th />
+                        <th />
+                        <th
+                            ><select
+                                bind:value={selectedFilters.source}
+                                class="form-select"
+                            >
+                                <option value="">Источник данных</option>
+                                {#each filterItems.Source as item}
+                                    <option value={item}>{item}</option>
+                                {/each}
+                            </select></th
+                        >
+                        <th
+                            ><select
+                                bind:value={selectedFilters.group}
+                                class="form-select"
+                            >
+                                <option value="">Группа</option>
+                                {#each filterItems.Group as item}
+                                    <option value={item}>{item}</option>
+                                {/each}
+                            </select></th
+                        >
+                        <th
+                            ><select
+                                bind:value={selectedFilters.market}
+                                class="form-select"
+                            >
+                                <option value="">Рынок</option>
+                                {#each filterItems.Market as item}
+                                    <option value={item}>{item}</option>
+                                {/each}
+                            </select></th
+                        >
+                        <th
+                            ><select
+                                bind:value={selectedFilters.deliveryType}
+                                class="form-select"
+                            >
+                                <option value="">Тип поставки</option>
+                                {#each filterItems.DeliveryType as item}
+                                    {#if !item}
+                                        <option value="0">Не указан</option>
+                                    {:else}
+                                        <option value={item}>{item}</option>
+                                    {/if}
+                                {/each}
+                            </select></th
+                        >
+                        <th
+                            ><select
+                                bind:value={selectedFilters.unit}
+                                class="form-select"
+                            >
+                                <option value="">Единица</option>
+                                {#each filterItems.Unit as item}
+                                    <option value={item}>{item}</option>
+                                {/each}
+                            </select></th
+                        >
+                        <th colspan="2" style="text-align: end;"
+                            ><button
+                                class="btn btn-secondary"
+                                on:click={() => resetFilters()}
+                            >
+                                Сбросить фильтры
+                            </button></th
+                        >
                     </tr>
                 </thead>
                 <tbody>
