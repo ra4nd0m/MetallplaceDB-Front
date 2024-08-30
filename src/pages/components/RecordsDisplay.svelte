@@ -9,10 +9,12 @@
     let dates: string;
     let start_date: string;
     let finish_date = "";
-    let propList: matProp[];
+    let propList: matProp[] = [];
     let isTableFolded = false;
     let monthsAgo = 3;
     let fetchFired = false;
+    let isAvgChecked = true;
+    let maxIndexArr: any[] = [];
     // Fetch the list of properties when the component mounts
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
@@ -22,7 +24,9 @@
                     return val.list as matProp[];
                 }
             })) || [];
-
+        propList.forEach(
+            (val) => (val.isSelected = preheckdProps.includes(val.Name)),
+        );
         fetchFired = true;
         if (bShowLastRecords) {
             recalcDates();
@@ -39,7 +43,8 @@
     }
 
     $: {
-        if (fetchFired && bShowLastRecords && monthsAgo) {
+        isAvgChecked;
+        if (fetchFired && bShowLastRecords && monthsAgo && propList) {
             recalcDates();
             getAllRecords();
         }
@@ -51,21 +56,27 @@
         finish_date = buf[2];
     }
     let dataList: dataListToDisplay[] = [];
+    let preheckdProps = ["Средняя цена", "Прогноз месяц"];
 
     //Not good
     //Backend support should work better
     async function getAllRecords() {
         // Extract the start and finish dates from the dates string
         let initialData: dateValuePair[][] = [];
+        let isFetchAttempted = false;
         if (!bShowLastRecords) {
             extractDates(dates);
         }
         // Loop over each property in the propList
         for (const prop of propList) {
             //Check for bad props and skip if found
-            if (prop.Id > 5 || prop.Id < 1) {
+            if (prop.Id > 6 || prop.Id < 1) {
                 continue;
             }
+            if (!prop.isSelected) {
+                continue;
+            }
+            isFetchAttempted = true;
             // Create the payload for the fetch request
             let payload = {
                 material_source_id: mat_id,
@@ -99,28 +110,31 @@
             // Add the value array to the initialData array
             initialData.push(value);
         }
-        let payloadAvg = {
-            material_source_id: mat_id,
-            property_id: 1,
-            start: start_date,
-            finish: finish_date,
-        };
-        let valuesAvg = (await doFetch(
-            JSON.stringify(payloadAvg),
-            "/getMonthlyAvgFeed",
-            secret,
-        ).then((val) => {
-            if (typeof val === "object" && "price_feed" in val) {
-                return val.price_feed;
-            } else {
-                return [];
-            }
-        })) as priceFeed[];
-        valuesAvg.forEach((item: { date: string }) => {
-            const buf = item.date.split("T");
-            item.date = buf[0];
-        });
-        initialData.push(valuesAvg);
+        if (isAvgChecked) {
+            isFetchAttempted = true;
+            let payloadAvg = {
+                material_source_id: mat_id,
+                property_id: 1,
+                start: start_date,
+                finish: finish_date,
+            };
+            let valuesAvg = (await doFetch(
+                JSON.stringify(payloadAvg),
+                "/getMonthlyAvgFeed",
+                secret,
+            ).then((val) => {
+                if (typeof val === "object" && "price_feed" in val) {
+                    return val.price_feed;
+                } else {
+                    return [];
+                }
+            })) as priceFeed[];
+            valuesAvg.forEach((item: { date: string }) => {
+                const buf = item.date.split("T");
+                item.date = buf[0];
+            });
+            initialData.push(valuesAvg);
+        }
         // Create a new array of unique dates from the initialData array
         let recivedDates = [
             ...new Set(
@@ -128,15 +142,16 @@
             ),
         ];
         //If no recived dates are filled, alert and return
-        if (recivedDates.length === 0) {
+        if (isFetchAttempted && recivedDates.length === 0) {
             alert("Данные за указанный период не найдены!");
+            dataList = [];
             return;
         }
         //Sort the recivedDates
         recivedDates.sort(
             (a, b) => new Date(a).getTime() - new Date(b).getTime(),
         );
-
+        let maxReachedIndex = 0;
         // Map over each date in recivedDates to create a new object for each date
         // Each object contains the date and the corresponding values from the initialData array
         dataList = recivedDates.map((item) => {
@@ -150,15 +165,31 @@
                 let valObj = arr.find((obj) => obj.date === item);
                 // If an object with the same date is found, add its value to the new object
                 // Otherwise, add an empty string
+                if (index + 1 > maxReachedIndex) {
+                    maxReachedIndex = index + 1;
+                }
                 object[`value${index + 1}`] = valObj ? valObj.value : "";
             });
             // Return the new object as an item in the dataList array
             return object as dataListToDisplay;
         });
+        maxIndexArr = Array.from({ length: maxReachedIndex });
     }
 
     function toggleTableFold() {
         isTableFolded = !isTableFolded;
+    }
+
+    $: {
+        propList;
+        isAvgChecked;
+        if (
+            start_date !== "" &&
+            typeof start_date !== "undefined" &&
+            !bShowLastRecords
+        ) {
+            getAllRecords();
+        }
     }
 
     type dateValuePair = {
@@ -166,18 +197,45 @@
         value: number;
     };
     $: dateFilled = dates !== "";
+    interface valueProperty {
+        [key: string]: string | number | undefined;
+    }
     interface dataListToDisplay {
         date: string;
-        value1?: string;
-        value2?: string;
-        value3?: string;
-        value4?: string;
-        value5?: string;
-        value6?: string;
+        [key: string]: valueProperty[keyof valueProperty];
     }
 </script>
 
 <div>
+    <div>
+        <div class="d-flex justify-content-center from-check mt-3">
+            {#if fetchFired}
+                {#each propList as prop}
+                    {#if prop.Id <= 6}
+                        <label class="from-check-label ms-3" for={prop.Name}
+                            >{prop.Name}</label
+                        >
+                        <input
+                            type="checkbox"
+                            class="from-check-input ms-1"
+                            id={prop.Name}
+                            value={prop.Id}
+                            bind:checked={prop.isSelected}
+                        />
+                    {/if}
+                {/each}
+                <label class="from-check-label ms-3" for="avgCheck"
+                    >Среднее значение за месяц</label
+                >
+                <input
+                    type="checkbox"
+                    class="from-check-input ms-2"
+                    id="avgCheck"
+                    bind:checked={isAvgChecked}
+                />
+            {/if}
+        </div>
+    </div>
     {#if !bShowLastRecords}
         <div class="d-flex justify-content-center">
             <div class="ms-3 mt-3">
@@ -230,11 +288,13 @@
                         {#if typeof propList !== "undefined" && dataList.length !== 0}
                             <th>Дата</th>
                             {#each propList as prop}
-                                {#if prop.Name !== ""}
+                                {#if prop.Name !== "" && prop.isSelected}
                                     <th>{prop.Name}</th>
                                 {/if}
                             {/each}
-                            <th>Среднее значение за месяц</th>
+                            {#if isAvgChecked}
+                                <th>Среднее значение за месяц</th>
+                            {/if}
                         {/if}
                     </tr>
                 </thead>
@@ -242,12 +302,9 @@
                     {#each dataList as item}
                         <tr>
                             <td>{item.date}</td>
-                            <td>{item.value1 ? item.value1 : ""}</td>
-                            <td>{item.value2 ? item.value2 : ""}</td>
-                            <td>{item.value3 ? item.value3 : ""}</td>
-                            <td>{item.value4 ? item.value4 : ""}</td>
-                            <td>{item.value5 ? item.value5 : ""}</td>
-                            <td>{item.value6 ? item.value6 : ""}</td>
+                            {#each maxIndexArr as _, i}
+                                <td>{item[`value${i + 1}`]}</td>
+                            {/each}
                         </tr>
                     {/each}
                 </tbody>

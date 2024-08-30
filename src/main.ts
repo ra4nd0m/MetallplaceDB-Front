@@ -8,7 +8,9 @@ Sentry.init({
   dsn: `${import.meta.env.VITE_SENTRY_DSN}`,
   //@ts-ignore
   integrations:[
-    Sentry.replayIntegration(),
+    Sentry.replayIntegration({
+      unmask:[".table",".form-control"]
+    }),
     Sentry.browserTracingIntegration(),
   ],
   tracesSampleRate: 1.0,
