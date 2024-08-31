@@ -73,6 +73,7 @@
             if (prop.Id > 6 || prop.Id < 1) {
                 continue;
             }
+            //If prop is not selected skip
             if (!prop.isSelected) {
                 continue;
             }
@@ -110,6 +111,7 @@
             // Add the value array to the initialData array
             initialData.push(value);
         }
+        //If avg values selected do the same thing
         if (isAvgChecked) {
             isFetchAttempted = true;
             let payloadAvg = {
@@ -133,6 +135,7 @@
                 const buf = item.date.split("T");
                 item.date = buf[0];
             });
+            //Add avg dates to the initialData array
             initialData.push(valuesAvg);
         }
         // Create a new array of unique dates from the initialData array
@@ -151,6 +154,7 @@
         recivedDates.sort(
             (a, b) => new Date(a).getTime() - new Date(b).getTime(),
         );
+        //Create maReachedIndex to calculate the amount of valueX properties created in dataList array
         let maxReachedIndex = 0;
         // Map over each date in recivedDates to create a new object for each date
         // Each object contains the date and the corresponding values from the initialData array
@@ -163,16 +167,19 @@
             initialData.forEach((arr, index) => {
                 // Find the object in the array that has the same date as the current item
                 let valObj = arr.find((obj) => obj.date === item);
-                // If an object with the same date is found, add its value to the new object
-                // Otherwise, add an empty string
+                //Check if new index+1 which equals to X in valueX is bigger then previous max index+1
+                //If it is so, then we have new biggest valueX
                 if (index + 1 > maxReachedIndex) {
                     maxReachedIndex = index + 1;
                 }
+                // If an object with the same date is found, add its value to the new object
+                // Otherwise, add an empty string
                 object[`value${index + 1}`] = valObj ? valObj.value : "";
             });
             // Return the new object as an item in the dataList array
             return object as dataListToDisplay;
         });
+        //Create an empty array with length of maxReachedIndex to interate over when table is being rendered
         maxIndexArr = Array.from({ length: maxReachedIndex });
     }
 
