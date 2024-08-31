@@ -7,7 +7,11 @@
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         let result = await doFetch(payload, "/getPropertyList", secret);
-        if (typeof result === "object" && "list" in result && result.list !== null) {
+        if (
+            typeof result === "object" &&
+            "list" in result &&
+            result.list !== null
+        ) {
             material_props_list = result.list as matProp[];
         } else {
             material_props_list = [];
@@ -45,11 +49,13 @@
         </thead>
         <tbody>
             {#each material_props_list as row}
-                <tr>
-                    <td>{row.Id}</td>
-                    <td>{row.Name}</td>
-                    <td>{row.Kind}</td>
-                </tr>
+                {#if row.Id <= 6 || import.meta.env.VITE_DEBUG === "true"}
+                    <tr>
+                        <td>{row.Id}</td>
+                        <td>{row.Name}</td>
+                        <td>{row.Kind}</td>
+                    </tr>
+                {/if}
             {/each}
             <tr>
                 <td />

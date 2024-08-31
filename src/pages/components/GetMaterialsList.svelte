@@ -4,7 +4,6 @@
     import { materials_data } from "../lib/stores";
     import { onMount } from "svelte";
     export let secret: string;
-    let bigList: material[];
     onMount(async () => {
         await grabData(secret);
     });
