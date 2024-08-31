@@ -71,7 +71,9 @@
                 minPriceIndex !== -1 &&
                 maxPriceIndex !== -1 &&
                 propValuePairs[minPriceIndex].propValue !== undefined &&
-                propValuePairs[maxPriceIndex].propValue !== undefined
+                propValuePairs[maxPriceIndex].propValue !== undefined &&
+                propValuePairs[minPriceIndex].propValue !== "" &&
+                propValuePairs[maxPriceIndex].propValue !== ""
             ) {
                 const avgPrice =
                     (Number(propValuePairs[minPriceIndex].propValue) +
