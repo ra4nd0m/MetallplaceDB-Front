@@ -99,7 +99,7 @@
     }
 </script>
 
-<RecordsDisplay {mat_id} {secret} bShowLastRecords={true} />
+
 <div class="d-flex justify-content-center">
     <form
         on:submit|preventDefault={async () => {
@@ -134,3 +134,4 @@
         </div>
     </form>
 </div>
+<RecordsDisplay {mat_id} {secret} bShowLastRecords={true} />

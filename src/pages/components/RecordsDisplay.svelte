@@ -327,12 +327,4 @@
             >
         {/if}
     </div>
-    {#if bShowLastRecords && !isTableFolded}
-        <div class="d-flex justify-content-center">
-            <label class="form-label" for="monthsAgoId"
-                >Месяцов от текущей даты
-            </label>
-            <input class="ms-3" type="number" min="1" bind:value={monthsAgo} />
-        </div>
-    {/if}
 </div>
