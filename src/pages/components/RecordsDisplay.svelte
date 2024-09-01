@@ -5,13 +5,12 @@
     import Flatpickr from "svelte-flatpickr";
     export let mat_id: number;
     export let secret: string;
-    export let bShowLastRecords: boolean;
     let dates: string;
     let start_date: string;
     let finish_date = "";
     let propList: matProp[] = [];
-    let isTableFolded = false;
-    let monthsAgo = 3;
+    let isTableFolded = true;
+    let monthsAgo = 1;
     let fetchFired = false;
     let isAvgChecked = false;
     let maxIndexArr: any[] = [];
@@ -28,27 +27,7 @@
             (val) => (val.isSelected = preheckdProps.includes(val.Name)),
         );
         fetchFired = true;
-        if (bShowLastRecords) {
-            recalcDates();
-            await getAllRecords();
-        }
     });
-
-    function recalcDates() {
-        const today = new Date();
-        finish_date = today.toISOString().split("T")[0];
-        start_date = new Date(today.setMonth(today.getMonth() - monthsAgo))
-            .toISOString()
-            .split("T")[0];
-    }
-
-    $: {
-        isAvgChecked;
-        if (fetchFired && bShowLastRecords && monthsAgo && propList) {
-            recalcDates();
-            getAllRecords();
-        }
-    }
 
     function extractDates(dates: string) {
         const buf = dates.split(" ");
@@ -64,9 +43,7 @@
         // Extract the start and finish dates from the dates string
         let initialData: dateValuePair[][] = [];
         let isFetchAttempted = false;
-        if (!bShowLastRecords) {
-            extractDates(dates);
-        }
+        extractDates(dates);
         // Loop over each property in the propList
         for (const prop of propList) {
             //Check for bad props and skip if found
@@ -181,6 +158,7 @@
         });
         //Create an empty array with length of maxReachedIndex to interate over when table is being rendered
         maxIndexArr = Array.from({ length: maxReachedIndex });
+        isTableFolded = false;
     }
 
     function toggleTableFold() {
@@ -190,11 +168,7 @@
     $: {
         propList;
         isAvgChecked;
-        if (
-            start_date !== "" &&
-            typeof start_date !== "undefined" &&
-            !bShowLastRecords
-        ) {
+        if (start_date !== "" && typeof start_date !== "undefined") {
             getAllRecords();
         }
     }
@@ -243,51 +217,35 @@
             {/if}
         </div>
     </div>
-    {#if !bShowLastRecords}
-        <div class="d-flex justify-content-center">
-            <div class="ms-3 mt-3">
-                <Flatpickr
-                    options={{ enableTime: false, mode: "range" }}
-                    bind:formattedValue={dates}
-                    class="form-control"
-                    placeholder="Дата"
-                />
-            </div>
-            <div class="ms-3 mt-3">
-                <button
-                    class="btn btn-primary"
-                    disabled={!dateFilled}
-                    on:click={async () => {
-                        await getAllRecords();
-                    }}>Загрузить</button
-                >
-            </div>
-        </div>
-    {/if}
-    {#if bShowLastRecords}
-        <div class="d-flex justify-content-center">
-            <label class="form-label" for="monthsAgoId"
-                >Месяцов от текущей даты
-            </label>
-            <input
-                class=" ms-3 from-control"
-                id="monthsAgoId"
-                type="number"
-                min="1"
-                bind:value={monthsAgo}
+    <div class="d-flex justify-content-center">
+        <div class="ms-3 mt-3">
+            <Flatpickr
+                options={{ enableTime: false, mode: "range" }}
+                bind:formattedValue={dates}
+                class="form-control"
+                placeholder="Дата"
             />
         </div>
-    {/if}
-    <div>
-        {#if bShowLastRecords}
+        <div class="ms-3 mt-3">
             <button
-                class="btn btn-primary mb-3"
-                on:click={() => {
-                    toggleTableFold();
-                }}
-                >{#if isTableFolded}Развернуть таблицу{:else}Свернуть таблицу{/if}</button
+                class="btn btn-primary"
+                disabled={!dateFilled}
+                on:click={async () => {
+                    await getAllRecords();
+                }}>Загрузить</button
             >
-        {/if}
+        </div>
+    </div>
+
+    <div>
+        <button
+            class="btn btn-primary mb-3"
+            on:click={() => {
+                toggleTableFold();
+            }}
+            >{#if isTableFolded}Развернуть таблицу{:else}Свернуть таблицу{/if}</button
+        >
+
         {#if !isTableFolded}
             <table class="table">
                 <thead>
@@ -317,7 +275,7 @@
                 </tbody>
             </table>
         {/if}
-        {#if !isTableFolded && bShowLastRecords}
+        {#if !isTableFolded}
             <button
                 class="btn btn-primary"
                 on:click={() => {

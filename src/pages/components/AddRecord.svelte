@@ -134,4 +134,4 @@
         </div>
     </form>
 </div>
-<RecordsDisplay {mat_id} {secret} bShowLastRecords={true} />
+<RecordsDisplay {mat_id} {secret} />
