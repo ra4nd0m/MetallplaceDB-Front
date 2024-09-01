@@ -56,7 +56,7 @@
         finish_date = buf[2];
     }
     let dataList: dataListToDisplay[] = [];
-    let preheckdProps = ["Средняя цена", "Мин цена", "Макс цена"];
+    let preheckdProps = ["Средняя цена", "Мин цена", "Макс цена", "Запас"];
 
     //Not good
     //Backend support should work better

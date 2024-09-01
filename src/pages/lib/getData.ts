@@ -48,7 +48,7 @@ export interface priceFeed {
     value: number;
 }
 export interface material {
-    Id?: number;
+    Id: number;
     name: string;
     source: string;
     group: string;
