@@ -13,7 +13,7 @@
     let isTableFolded = false;
     let monthsAgo = 3;
     let fetchFired = false;
-    let isAvgChecked = true;
+    let isAvgChecked = false;
     let maxIndexArr: any[] = [];
     // Fetch the list of properties when the component mounts
     onMount(async () => {
@@ -56,7 +56,7 @@
         finish_date = buf[2];
     }
     let dataList: dataListToDisplay[] = [];
-    let preheckdProps = ["Средняя цена", "Прогноз месяц"];
+    let preheckdProps = ["Средняя цена", "Мин цена", "Макс цена"];
 
     //Not good
     //Backend support should work better
