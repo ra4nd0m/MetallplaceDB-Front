@@ -315,13 +315,6 @@
                                                 mat_id={row.Id}
                                             />
                                         {/if}
-                                        {#if selectedMenu == "showRecords"}
-                                            <RecordsDisplay
-                                                {secret}
-                                                mat_id={row.Id}
-                                                bShowLastRecords={false}
-                                            />
-                                        {/if}
                                     </SubmenuSwitch>
                                 </td>
                             </tr>
