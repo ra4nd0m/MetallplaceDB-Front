@@ -4,6 +4,7 @@
     import { materials_data } from "../lib/stores";
     import { onMount } from "svelte";
     export let secret: string;
+    let specialIds = [26, 27, 28];
     onMount(async () => {
         await grabData(secret);
     });
@@ -36,14 +37,24 @@
         const today = new Date().toISOString().split("T")[0];
         let updateDatesArr = [];
         for (let matObj of mat_list) {
-            let paylad = {
-                finish: today,
-                material_source_id: matObj.Id,
-                n_values: 1,
-                property_id: 1,
-            };
+            let payload = {};
+            if (specialIds.includes(matObj.Id)) {
+                payload = {
+                    finish: today,
+                    material_source_id: matObj.Id,
+                    n_values: 1,
+                    property_id: 6,
+                };
+            } else {
+                payload = {
+                    finish: today,
+                    material_source_id: matObj.Id,
+                    n_values: 1,
+                    property_id: 1,
+                };
+            }
             const res = (await doFetch(
-                JSON.stringify(paylad),
+                JSON.stringify(payload),
                 "/getNLastValues",
                 secret,
             ).then((val) => {
@@ -67,4 +78,3 @@
     }}
     class="btn btn-primary">Обновить список материалов</button
 >
-

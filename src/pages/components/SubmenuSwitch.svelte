@@ -9,8 +9,5 @@
     <button class="btn btn-primary" on:click={() => (selectedMenu = "addRecord")}
         >Добавить запись</button
     >
-    <button class="btn btn-primary" on:click={() => (selectedMenu = "showRecords")}
-        >Показать записи</button
-    >
     <slot />
 </div>

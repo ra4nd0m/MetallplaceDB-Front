@@ -24,7 +24,7 @@ export async function doFetch(payload: string, address: string, token: string, i
         return ret_value;
     } catch (err) {
         Sentry.captureException(err);
-        alert(err);
+        alert(`Ошибка:${err}\nВозможно, данные за месяц еще не внесены и база выдает ошибку при запросе средних значений за месяц\nПопробуйте запросить данные за прошлый месяц`);
         return '';
     }
 }
@@ -48,7 +48,7 @@ export interface priceFeed {
     value: number;
 }
 export interface material {
-    Id?: number;
+    Id: number;
     name: string;
     source: string;
     group: string;
