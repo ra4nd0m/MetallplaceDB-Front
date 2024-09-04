@@ -10,7 +10,6 @@
     let finish_date = "";
     let propList: matProp[] = [];
     let isTableFolded = true;
-    let monthsAgo = 1;
     let fetchFired = false;
     let isAvgChecked = false;
     let maxIndexArr: any[] = [];
@@ -70,7 +69,11 @@
             ).then((val) => {
                 // If the returned value is an object and contains a price_feed property, return the price_feed
                 // Otherwise, return an empty array
-                if (typeof val === "object" && "price_feed" in val) {
+                if (
+                    typeof val === "object" &&
+                    "price_feed" in val &&
+                    val.price_feed !== null
+                ) {
                     return val.price_feed;
                 } else {
                     return [];
