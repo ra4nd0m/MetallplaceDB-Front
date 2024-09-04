@@ -53,8 +53,8 @@
     }
     async function addRecord(payload: string) {
         let resp = await doFetch(payload, "/addValue", secret);
-        if (typeof resp !== "object" || !("sucssess" in resp)) {
-            throw new Error("Ошибка внутреннего сервиса!");
+        if (typeof resp !== "object" || !("success" in resp)) {
+            throw new Error("Неизвестная ошибка!");
         }
         return;
     }
