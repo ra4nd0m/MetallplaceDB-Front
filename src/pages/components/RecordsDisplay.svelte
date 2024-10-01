@@ -164,6 +164,8 @@
         isTableFolded = false;
     }
 
+    function deleteRecord() {}
+
     function toggleTableFold() {
         isTableFolded = !isTableFolded;
     }
@@ -264,6 +266,7 @@
                                 <th>Среднее значение за месяц</th>
                             {/if}
                         {/if}
+                        <th />
                     </tr>
                 </thead>
                 <tbody>
@@ -273,6 +276,13 @@
                             {#each maxIndexArr as _, i}
                                 <td>{item[`value${i + 1}`]}</td>
                             {/each}
+                            <td
+                                ><button
+                                    class="btn btn-danger"
+                                    on:click={() => deleteRecord()}
+                                    >Удалить</button
+                                ></td
+                            >
                         </tr>
                     {/each}
                 </tbody>
