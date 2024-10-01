@@ -177,21 +177,27 @@
     }
 
     async function deleteRecord(date: string, propsUsed: number[]) {
-        for (const prop of propsUsed) {
-            if (prop !== -1) {
-                let payload = {
-                    uid: mat_id,
-                    propertyId: prop,
-                    createdOn: date,
-                };
-                console.log(payload);
-                await doFetch(
-                    JSON.stringify(payload),
-                    "/backend/materialValue/deleteValue",
-                    secret,
-                    true,
-                    true,
-                );
+        if (
+            window.confirm(
+                `Вы уверены что хотите удалить ВСЕ запись/записи за ${date}?`,
+            )
+        ) {
+            for (const prop of propsUsed) {
+                if (prop !== -1) {
+                    let payload = {
+                        uid: mat_id,
+                        propertyId: prop,
+                        createdOn: date,
+                    };
+                    console.log(payload);
+                    await doFetch(
+                        JSON.stringify(payload),
+                        "/backend/materialValue/deleteValue",
+                        secret,
+                        true,
+                        true,
+                    );
+                }
             }
         }
     }
