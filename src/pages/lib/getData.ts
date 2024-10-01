@@ -1,10 +1,16 @@
 import { push } from 'svelte-spa-router';
 import * as Sentry from '@sentry/svelte';
 
-export async function doFetch(payload: string, address: string, token: string, isNew?: boolean): Promise<fetchReturnType> {
+export async function doFetch(payload: string, address: string, token: string, isNew?: boolean, newApi?: boolean): Promise<fetchReturnType> {
     isNew = isNew || false;
     try {
-        const resp = await fetch(`${import.meta.env.VITE_API_URL}${address}`, {
+        let url = "";
+        if (newApi !== null && newApi !== false) {
+            url = `${import.meta.env.VITE_API_URL}${address}`;
+        } else {
+            url = `${import.meta.env.VITE_NEW_API_URL}${address}`;
+        }
+        const resp = await fetch(url, {
             method: 'POST',
             headers: { Authorization: token, "Content-Type": "application/json" },
             body: payload,
