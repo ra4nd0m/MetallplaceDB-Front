@@ -22,9 +22,9 @@ jobs:
         run: |
           zip -r ./dist.zip dist/*
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-            name: MP-Front
+            name: MPL-Front
             path: ./dist.zip
       - name: Extract branch name
         shell: bash
