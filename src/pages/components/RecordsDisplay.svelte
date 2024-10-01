@@ -142,7 +142,6 @@
         );
         //Create maReachedIndex to calculate the amount of valueX properties created in dataList array
         let maxReachedIndex = 0;
-        console.log(initialData);
         // Map over each date in recivedDates to create a new object for each date
         // Each object contains the date and the corresponding values from the initialData array
         dataList = recivedDates.map((item) => {
@@ -155,7 +154,6 @@
             initialData.forEach((arr, index) => {
                 // Find the object in the array that has the same date as the current item
                 let valObj = arr.find((obj) => obj.date === item);
-                console.log(valObj);
                 //Check if new index+1 which equals to X in valueX is bigger then previous max index+1
                 //If it is so, then we have new biggest valueX
                 if (index + 1 > maxReachedIndex) {
@@ -172,7 +170,6 @@
             // Return the new object as an item in the dataList array
             return object as dataListToDisplay;
         });
-        console.log(dataList);
         //Create an empty array with length of maxReachedIndex to interate over when table is being rendered
         maxIndexArr = Array.from({ length: maxReachedIndex });
         isTableFolded = false;
