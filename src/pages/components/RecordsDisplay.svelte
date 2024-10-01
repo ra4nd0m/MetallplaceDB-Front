@@ -189,7 +189,6 @@
                         propertyId: prop,
                         createdOn: date,
                     };
-                    console.log(payload);
                     await doFetch(
                         JSON.stringify(payload),
                         "/backend/materialValue/deleteValue",
