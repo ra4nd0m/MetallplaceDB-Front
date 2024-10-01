@@ -3,6 +3,7 @@
     import { doFetch } from "../lib/getData";
     import type { matProp, priceFeed } from "../lib/getData";
     import Flatpickr from "svelte-flatpickr";
+    import { token } from "../lib/stores";
     export let mat_id: number;
     export let secret: string;
     let dates: string;
@@ -175,11 +176,24 @@
         isTableFolded = false;
     }
 
-    function deleteRecord() {
-        let payload = {
-            uid: mat_id,
-            propertyId: "",
-        };
+    async function deleteRecord(date: string, propsUsed: number[]) {
+        for (const prop of propsUsed) {
+            if (prop !== -1) {
+                let payload = {
+                    uid: mat_id,
+                    propertyId: prop,
+                    createdOn: date,
+                };
+                console.log(payload);
+                await doFetch(
+                    JSON.stringify(payload),
+                    "/backend/materialValue/deleteValue",
+                    secret,
+                    true,
+                    true,
+                );
+            }
+        }
     }
 
     function toggleTableFold() {
@@ -297,7 +311,8 @@
                             <td
                                 ><button
                                     class="btn btn-danger"
-                                    on:click={() => deleteRecord()}
+                                    on:click={() =>
+                                        deleteRecord(item.date, item.propsUsed)}
                                     >Удалить</button
                                 ></td
                             >

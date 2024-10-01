@@ -5,10 +5,10 @@ export async function doFetch(payload: string, address: string, token: string, i
     isNew = isNew || false;
     try {
         let url = "";
-        if (newApi !== null && newApi !== false) {
-            url = `${import.meta.env.VITE_API_URL}${address}`;
-        } else {
+        if (newApi !== null && newApi == true) {
             url = `${import.meta.env.VITE_NEW_API_URL}${address}`;
+        } else {
+            url = `${import.meta.env.VITE_API_URL}${address}`;
         }
         const resp = await fetch(url, {
             method: 'POST',
