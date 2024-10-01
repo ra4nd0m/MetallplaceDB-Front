@@ -52,9 +52,10 @@ interface responseList {
 export interface priceFeed {
     date: string;
     value: number;
+    propUsed?: number;
 }
 export interface material {
-    Id: number;
+    Id?: number;
     name: string;
     source: string;
     group: string;

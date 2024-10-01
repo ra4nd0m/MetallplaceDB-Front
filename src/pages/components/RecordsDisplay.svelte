@@ -46,6 +46,7 @@
         // Loop over each property in the propList
         for (const prop of propList) {
             //Check for bad props and skip if found
+            let propUsed: number;
             if (prop.Id > 6 || prop.Id < 1) {
                 continue;
             }
@@ -83,10 +84,14 @@
             if (value === null) {
                 continue;
             }
+            propUsed = prop.Id;
             // Format the date in each item of the value array
             value.forEach((item: { date: string }) => {
                 const buf = item.date.split("T");
                 item.date = buf[0];
+            });
+            value.forEach((item) => {
+                item.propUsed = propUsed;
             });
             // Add the value array to the initialData array
             initialData.push(value);
@@ -115,6 +120,7 @@
                 const buf = item.date.split("T");
                 item.date = buf[0];
             });
+            valuesAvg.forEach((item) => (item.propUsed = -1));
             //Add avg dates to the initialData array
             initialData.push(valuesAvg);
         }
@@ -136,17 +142,20 @@
         );
         //Create maReachedIndex to calculate the amount of valueX properties created in dataList array
         let maxReachedIndex = 0;
+        console.log(initialData);
         // Map over each date in recivedDates to create a new object for each date
         // Each object contains the date and the corresponding values from the initialData array
         dataList = recivedDates.map((item) => {
             let object: {
                 date: string;
-                [key: string]: number | string | undefined;
-            } = { date: item };
+                propsUsed: number[];
+                [key: string]: number | string | number[] | undefined;
+            } = { date: item, propsUsed: [] };
             // Loop over each array in the initialData array
             initialData.forEach((arr, index) => {
                 // Find the object in the array that has the same date as the current item
                 let valObj = arr.find((obj) => obj.date === item);
+                console.log(valObj);
                 //Check if new index+1 which equals to X in valueX is bigger then previous max index+1
                 //If it is so, then we have new biggest valueX
                 if (index + 1 > maxReachedIndex) {
@@ -155,16 +164,26 @@
                 // If an object with the same date is found, add its value to the new object
                 // Otherwise, add an empty string
                 object[`value${index + 1}`] = valObj ? valObj.value : "";
+                if (valObj) {
+                    //@ts-ignore
+                    object.propsUsed.push(valObj.propUsed);
+                }
             });
             // Return the new object as an item in the dataList array
             return object as dataListToDisplay;
         });
+        console.log(dataList);
         //Create an empty array with length of maxReachedIndex to interate over when table is being rendered
         maxIndexArr = Array.from({ length: maxReachedIndex });
         isTableFolded = false;
     }
 
-    function deleteRecord() {}
+    function deleteRecord() {
+        let payload = {
+            uid: mat_id,
+            propertyId: "",
+        };
+    }
 
     function toggleTableFold() {
         isTableFolded = !isTableFolded;
@@ -181,13 +200,15 @@
     type dateValuePair = {
         date: string;
         value: number;
+        propUsed?: number;
     };
     $: dateFilled = dates !== "";
     interface valueProperty {
-        [key: string]: string | number | undefined;
+        [key: string]: string | number | undefined | number[];
     }
     interface dataListToDisplay {
         date: string;
+        propsUsed: number[];
         [key: string]: valueProperty[keyof valueProperty];
     }
 </script>
