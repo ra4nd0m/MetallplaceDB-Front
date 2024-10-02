@@ -316,8 +316,8 @@
                             {/each}
                             <td
                                 ><a
-                                    href="/#"
-                                    on:click={async () =>
+                                    href="/#/delete"
+                                    on:click|preventDefault={async () =>
                                         await deleteRecord(
                                             item.date,
                                             item.propsUsed,
