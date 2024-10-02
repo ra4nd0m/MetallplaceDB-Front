@@ -180,7 +180,7 @@
     async function deleteRecord(date: string, propsUsed: number[]) {
         if (
             window.confirm(
-                `Вы уверены что хотите удалить ВСЕ запись/записи за ${date}?`,
+                `Вы уверены что хотите удалить ВСЕ записи за ${date}?`,
             )
         ) {
             for (const prop of propsUsed) {
@@ -197,6 +197,8 @@
                         true,
                         true,
                     );
+                } else {
+                    alert(`Среднее значение не записано в базу и удалить его не выйдет\nЧтобы изменить его, измените средние занчения за месяц` );
                 }
             }
         }
