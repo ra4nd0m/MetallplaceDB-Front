@@ -316,8 +316,8 @@
                             <td
                                 ><button
                                     class="btn btn-danger"
-                                    on:click={() =>
-                                        deleteRecord(item.date, item.propsUsed)}
+                                    on:click={async() =>
+                                         await deleteRecord(item.date, item.propsUsed)}
                                     >Удалить</button
                                 ></td
                             >
