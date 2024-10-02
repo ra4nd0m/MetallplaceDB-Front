@@ -101,18 +101,19 @@
         if (isAvgChecked) {
             isFetchAttempted = true;
             let payloadAvg = {
-                material_source_id: mat_id,
-                property_id: 1,
-                start: start_date,
-                finish: finish_date,
+                matId: mat_id,
+                dateStart: start_date,
+                dateFinish: finish_date,
             };
             let valuesAvg = (await doFetch(
                 JSON.stringify(payloadAvg),
-                "/getMonthlyAvgFeed",
+                "/backend/materialValue/getMonthlyAvg",
                 secret,
+                false,
+                true,
             ).then((val) => {
-                if (typeof val === "object" && "price_feed" in val) {
-                    return val.price_feed;
+                if (typeof val === "object") {
+                    return val;
                 } else {
                     return [];
                 }
@@ -314,11 +315,13 @@
                                 <td>{item[`value${i + 1}`]}</td>
                             {/each}
                             <td
-                                ><button
-                                    class="btn btn-danger"
-                                    on:click={async() =>
-                                         await deleteRecord(item.date, item.propsUsed)}
-                                    >Удалить</button
+                                ><a
+                                    href="/#"
+                                    on:click={async () =>
+                                        await deleteRecord(
+                                            item.date,
+                                            item.propsUsed,
+                                        )}>Удалить</a
                                 ></td
                             >
                         </tr>
