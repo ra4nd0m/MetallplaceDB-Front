@@ -4,13 +4,13 @@
     import "flatpickr/dist/flatpickr.css";
     import * as Sentry from "@sentry/svelte";
     import RecordsDisplay from "./RecordsDisplay.svelte";
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     export let mat_id: number;
     export let secret: string;
     let created_on: string | any;
     let propValuePairs: propValuePair[] = [];
     let isPropsFetched = false;
-    let updateTrigger = false;
+    const dispatch = createEventDispatcher();
 
     let propList: matProp[] = [];
     onMount(async () => {
@@ -34,6 +34,7 @@
             alert("Дата не задана!");
             return;
         }
+        let errorDropped = false;
         for (const propPair of propValuePairs) {
             if (propPair.propValue !== undefined && propPair.propValue !== "") {
                 const payload = {
@@ -46,12 +47,15 @@
                 try {
                     await addRecord(JSON.stringify(payload));
                 } catch (err) {
+                    errorDropped = true;
                     Sentry.captureException(err);
                     alert(err);
                 }
             }
         }
-        updateTrigger = !updateTrigger;
+        if (!errorDropped) {
+            dispatch("dataAdded");
+        }
     }
     async function addRecord(payload: string) {
         let resp = await doFetch(payload, "/addValue", secret);
@@ -135,4 +139,3 @@
         </div>
     </form>
 </div>
-
