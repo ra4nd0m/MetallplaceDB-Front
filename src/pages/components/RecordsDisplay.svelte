@@ -1,9 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { doFetch } from "../lib/getData";
-    import type { matProp, priceFeed } from "../lib/getData";
+    import type { matProp } from "../lib/getData";
     import Flatpickr from "svelte-flatpickr";
-    import { token } from "../lib/stores";
     export let mat_id: number;
     export let secret: string;
     let dates: string;
@@ -13,7 +12,16 @@
     let isTableFolded = true;
     let fetchFired = false;
     let isAvgChecked = false;
-    let maxIndexArr: any[] = [];
+    let dataValues: valuesForDateRange[] = [];
+    let columnsToShow = {
+        value1: false,
+        value2: false,
+        value3: false,
+        value4: false,
+        value5: false,
+        valueAvg: false,
+    };
+
     // Fetch the list of properties when the component mounts
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
@@ -34,20 +42,18 @@
         start_date = buf[0];
         finish_date = buf[2];
     }
-    let dataList: dataListToDisplay[] = [];
     let preheckdProps = ["Средняя цена", "Мин цена", "Макс цена", "Запас"];
 
     //Not good
     //Backend support should work better
     async function getAllRecords() {
         // Extract the start and finish dates from the dates string
-        let initialData: dateValuePair[][] = [];
         let isFetchAttempted = false;
         extractDates(dates);
+        let propertyIdList: number[] = [];
         // Loop over each property in the propList
         for (const prop of propList) {
             //Check for bad props and skip if found
-            let propUsed: number;
             if (prop.Id > 6 || prop.Id < 1) {
                 continue;
             }
@@ -55,126 +61,56 @@
             if (!prop.isSelected) {
                 continue;
             }
-            isFetchAttempted = true;
-            // Create the payload for the fetch request
-            let payload = {
-                material_source_id: mat_id,
-                property_id: prop.Id,
-                start: start_date,
-                finish: finish_date,
-            };
-            // Make the fetch request and store the returned value
-            let value: priceFeed[] = (await doFetch(
-                JSON.stringify(payload),
-                "/getValueForPeriod",
-                secret,
-            ).then((val) => {
-                // If the returned value is an object and contains a price_feed property, return the price_feed
-                // Otherwise, return an empty array
-                if (
-                    typeof val === "object" &&
-                    "price_feed" in val &&
-                    val.price_feed !== null
-                ) {
-                    return val.price_feed;
-                } else {
-                    return [];
-                }
-            })) as priceFeed[];
-            //Skip empty dates
-            if (value === null) {
-                continue;
-            }
-            propUsed = prop.Id;
-            // Format the date in each item of the value array
-            value.forEach((item: { date: string }) => {
-                const buf = item.date.split("T");
-                item.date = buf[0];
-            });
-            value.forEach((item) => {
-                item.propUsed = propUsed;
-            });
-            // Add the value array to the initialData array
-            initialData.push(value);
+            //Push prop into list
+            propertyIdList.push(prop.Id);
         }
-        //If avg values selected do the same thing
+        //Treat avg val as prop with -1
         if (isAvgChecked) {
-            isFetchAttempted = true;
-            let payloadAvg = {
-                matId: mat_id,
-                dateStart: start_date,
-                dateFinish: finish_date,
-            };
-            let valuesAvg = (await doFetch(
-                JSON.stringify(payloadAvg),
-                "/backend/materialValue/getMonthlyAvg",
-                secret,
-                false,
-                true,
-            ).then((val) => {
-                if (typeof val === "object") {
-                    return val;
-                } else {
-                    return [];
-                }
-            })) as priceFeed[];
-            valuesAvg.forEach((item: { date: string }) => {
-                const buf = item.date.split("T");
-                item.date = buf[0];
-            });
-            valuesAvg.forEach((item) => (item.propUsed = -1));
-            //Add avg dates to the initialData array
-            initialData.push(valuesAvg);
+            propertyIdList.push(-1);
         }
-        // Create a new array of unique dates from the initialData array
-        let recivedDates = [
-            ...new Set(
-                initialData.flatMap((item) => item.map((obj) => obj.date)),
-            ),
-        ];
+        //Make request
+        isFetchAttempted = true;
+        let payload = {
+            matId: mat_id,
+            propertyIdList: propertyIdList,
+            dateStart: start_date,
+            dateFinish: finish_date,
+        };
+        dataValues = (await doFetch(
+            JSON.stringify(payload),
+            "/backend/materialValue/getValuesForPropsListPeriod",
+            secret,
+            false,
+            true,
+        ).then((val) => {
+            if (typeof val === "object") {
+                return val;
+            } else {
+                return [];
+            }
+        })) as valuesForDateRange[];
+
         //If no recived dates are filled, alert and return
-        if (isFetchAttempted && recivedDates.length === 0) {
+        if (isFetchAttempted && dataValues.length === 0) {
             alert("Данные за указанный период не найдены!");
-            dataList = [];
             return;
         }
-        //Sort the recivedDates
-        recivedDates.sort(
-            (a, b) => new Date(a).getTime() - new Date(b).getTime(),
-        );
-        //Create maReachedIndex to calculate the amount of valueX properties created in dataList array
-        let maxReachedIndex = 0;
-        // Map over each date in recivedDates to create a new object for each date
-        // Each object contains the date and the corresponding values from the initialData array
-        dataList = recivedDates.map((item) => {
-            let object: {
-                date: string;
-                propsUsed: number[];
-                [key: string]: number | string | number[] | undefined;
-            } = { date: item, propsUsed: [] };
-            // Loop over each array in the initialData array
-            initialData.forEach((arr, index) => {
-                // Find the object in the array that has the same date as the current item
-                let valObj = arr.find((obj) => obj.date === item);
-                //Check if new index+1 which equals to X in valueX is bigger then previous max index+1
-                //If it is so, then we have new biggest valueX
-                if (index + 1 > maxReachedIndex) {
-                    maxReachedIndex = index + 1;
-                }
-                // If an object with the same date is found, add its value to the new object
-                // Otherwise, add an empty string
-                object[`value${index + 1}`] = valObj ? valObj.value : "";
-                if (valObj) {
-                    //@ts-ignore
-                    object.propsUsed.push(valObj.propUsed);
-                }
-            });
-            // Return the new object as an item in the dataList array
-            return object as dataListToDisplay;
-        });
-        //Create an empty array with length of maxReachedIndex to interate over when table is being rendered
-        maxIndexArr = Array.from({ length: maxReachedIndex });
         isTableFolded = false;
+        columnsToShow = {
+            value1: false,
+            value2: false,
+            value3: false,
+            value4: false,
+            value5: false,
+            valueAvg: isAvgChecked,
+        };
+        dataValues.forEach((item) => {
+            if (item.value1) columnsToShow.value1 = true;
+            if (item.value2) columnsToShow.value2 = true;
+            if (item.value3) columnsToShow.value3 = true;
+            if (item.value4) columnsToShow.value4 = true;
+            if (item.value5) columnsToShow.value5 = true;
+        });
     }
 
     async function deleteRecord(date: string, propsUsed: number[]) {
@@ -198,7 +134,9 @@
                         true,
                     );
                 } else {
-                    alert(`Среднее значение не записано в базу и удалить его не выйдет\nЧтобы изменить его, измените средние занчения за месяц` );
+                    alert(
+                        `Среднее значение не записано в базу и удалить его не выйдет\nЧтобы изменить его, измените средние занчения за месяц`,
+                    );
                 }
             }
         }
@@ -216,19 +154,16 @@
         }
     }
 
-    type dateValuePair = {
-        date: string;
-        value: number;
-        propUsed?: number;
-    };
     $: dateFilled = dates !== "";
-    interface valueProperty {
-        [key: string]: string | number | undefined | number[];
-    }
-    interface dataListToDisplay {
+    interface valuesForDateRange {
         date: string;
         propsUsed: number[];
-        [key: string]: valueProperty[keyof valueProperty];
+        value1?: string;
+        value2?: string;
+        value3?: string;
+        value4?: string;
+        value5?: string;
+        valueAvg?: string;
     }
 </script>
 
@@ -295,7 +230,7 @@
             <table class="table">
                 <thead>
                     <tr>
-                        {#if typeof propList !== "undefined" && dataList.length !== 0}
+                        {#if typeof propList !== "undefined" && dataValues.length !== 0}
                             <th>Дата</th>
                             {#each propList as prop}
                                 {#if prop.Name !== "" && prop.isSelected}
@@ -310,12 +245,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each dataList as item}
+                    {#each dataValues as item}
                         <tr>
                             <td>{item.date}</td>
-                            {#each maxIndexArr as _, i}
-                                <td>{item[`value${i + 1}`]}</td>
-                            {/each}
+                            {#if columnsToShow.value1}<td
+                                    >{item.value1 ?? ""}</td
+                                >{/if}
+                            {#if columnsToShow.value2}<td
+                                    >{item.value2 ?? ""}</td
+                                >{/if}
+                            {#if columnsToShow.value3}<td
+                                    >{item.value3 ?? ""}</td
+                                >{/if}
+                            {#if columnsToShow.value4}<td
+                                    >{item.value4 ?? ""}</td
+                                >{/if}
+                            {#if columnsToShow.value5}<td
+                                    >{item.value5 ?? ""}</td
+                                >{/if}
+                            {#if columnsToShow.valueAvg}<td
+                                    >{item.valueAvg ?? ""}</td
+                                >{/if}
                             <td
                                 ><a
                                     href="/#/delete"
