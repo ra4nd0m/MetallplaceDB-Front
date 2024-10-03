@@ -3,8 +3,10 @@
     import { doFetch } from "../lib/getData";
     import type { matProp } from "../lib/getData";
     import Flatpickr from "svelte-flatpickr";
+    import { date } from "yup";
     export let mat_id: number;
     export let secret: string;
+    export let updateTriggered = false;
     let dates: string;
     let start_date: string;
     let finish_date = "";
@@ -153,8 +155,22 @@
             getAllRecords();
         }
     }
-
     $: dateFilled = dates !== "";
+    $: {
+        if (
+            updateTriggered &&
+            start_date !== "" &&
+            finish_date !== "" &&
+            dates.length !== 0 &&
+            dates.indexOf("to") !== -1
+        ) {
+            console.log("trg", " ", dates," ",updateTriggered);
+            getAllRecords();
+            updateTriggered = false;
+        } else{
+            updateTriggered =false;
+        }
+    }
     interface valuesForDateRange {
         date: string;
         propsUsed: number[];
