@@ -1,14 +1,14 @@
 <script lang="ts">
     let recordsDisabled = false;
     let listDisabled = false;
-    export let selectedMenu = "addRecord";
+    export let selectedMenu = "records";
     $: {
         switch (selectedMenu) {
             case "propsList":
                 listDisabled = true;
                 recordsDisabled = false;
                 break;
-            case "addRecord":
+            case "records":
                 listDisabled = false;
                 recordsDisabled = true;
                 break;
