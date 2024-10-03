@@ -10,6 +10,7 @@
     let created_on: string | any;
     let propValuePairs: propValuePair[] = [];
     let isPropsFetched = false;
+    let updateTrigger = false;
 
     let propList: matProp[] = [];
     onMount(async () => {
@@ -50,6 +51,7 @@
                 }
             }
         }
+        updateTrigger = !updateTrigger;
     }
     async function addRecord(payload: string) {
         let resp = await doFetch(payload, "/addValue", secret);
@@ -99,7 +101,6 @@
     }
 </script>
 
-
 <div class="d-flex justify-content-center">
     <form
         on:submit|preventDefault={async () => {
@@ -134,4 +135,4 @@
         </div>
     </form>
 </div>
-<RecordsDisplay {mat_id} {secret} />
+

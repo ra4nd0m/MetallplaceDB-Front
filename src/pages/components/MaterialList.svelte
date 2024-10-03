@@ -6,6 +6,7 @@
     import AddRecord from "./AddRecord.svelte";
     import SubmenuSwitch from "./SubmenuSwitch.svelte";
     import RecordsDisplay from "./RecordsDisplay.svelte";
+    import RecordsManager from "./RecordsManager.svelte";
 
     let tableData: dataTableObjectExtended[];
     let page = 0;
@@ -310,9 +311,9 @@
                                             />
                                         {/if}
                                         {#if selectedMenu == "addRecord"}
-                                            <AddRecord
-                                                {secret}
+                                            <RecordsManager
                                                 mat_id={row.Id}
+                                                {secret}
                                             />
                                         {/if}
                                     </SubmenuSwitch>
