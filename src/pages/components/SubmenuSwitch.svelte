@@ -20,7 +20,7 @@
     <button
         class="btn btn-primary"
         disabled={recordsDisabled}
-        on:click={() => (selectedMenu = "addRecord")}>Добавить запись</button
+        on:click={() => (selectedMenu = "records")}>Записи</button
     >
     <button
         class="btn btn-primary"

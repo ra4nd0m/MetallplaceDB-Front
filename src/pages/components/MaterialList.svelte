@@ -310,7 +310,7 @@
                                                 mat_id={row.Id}
                                             />
                                         {/if}
-                                        {#if selectedMenu == "addRecord"}
+                                        {#if selectedMenu == "records"}
                                             <RecordsManager
                                                 mat_id={row.Id}
                                                 {secret}
