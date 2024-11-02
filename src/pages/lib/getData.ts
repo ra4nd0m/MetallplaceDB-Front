@@ -1,7 +1,9 @@
 import { push } from 'svelte-spa-router';
 import * as Sentry from '@sentry/svelte';
-
-export async function doFetch(payload: string, address: string, token: string, isNew?: boolean, newApi?: boolean): Promise<fetchReturnType> {
+import { token } from './stores';
+let secret: string;
+token.subscribe((val) => secret = val);
+export async function doFetch(payload: string, address: string, isNew?: boolean, newApi?: boolean): Promise<fetchReturnType> {
     isNew = isNew || false;
     try {
         let url = "";
@@ -12,7 +14,7 @@ export async function doFetch(payload: string, address: string, token: string, i
         }
         const resp = await fetch(url, {
             method: 'POST',
-            headers: { Authorization: token, "Content-Type": "application/json" },
+            headers: { Authorization: secret, "Content-Type": "application/json" },
             body: payload,
         })
         if (resp.status === 401) {
@@ -30,7 +32,7 @@ export async function doFetch(payload: string, address: string, token: string, i
         return ret_value;
     } catch (err) {
         Sentry.captureException(err);
-        alert(`Ошибка:${err}\nВозможно, данные за месяц еще не внесены и база выдает ошибку при запросе средних значений за месяц\nПопробуйте запросить данные за прошлый месяц`);
+        alert(`Ошибка: ${err}`);
         return '';
     }
 }

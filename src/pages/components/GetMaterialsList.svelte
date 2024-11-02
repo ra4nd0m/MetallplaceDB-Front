@@ -12,7 +12,7 @@
     async function grabData(key: string) {
         if (key.length != 0) {
             let material_list: material[] = [];
-            let result = await doFetch("{}", "/getMaterialList", secret);
+            let result = await doFetch("{}", "/getMaterialList");
             if (typeof result === "object" && "list" in result) {
                 material_list = result.list as material[];
             } else {
@@ -38,6 +38,7 @@
         let updateDatesArr = [];
         for (let matObj of mat_list) {
             let payload = {};
+            //@ts-ignore
             if (specialIds.includes(matObj.Id)) {
                 payload = {
                     finish: today,
@@ -56,7 +57,6 @@
             const res = (await doFetch(
                 JSON.stringify(payload),
                 "/getNLastValues",
-                secret,
             ).then((val) => {
                 if (typeof val === "object" && "price_feed" in val) {
                     return val.price_feed;

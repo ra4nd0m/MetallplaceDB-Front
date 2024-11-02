@@ -305,23 +305,17 @@
                                 <td colspan="9">
                                     <SubmenuSwitch bind:selectedMenu>
                                         {#if selectedMenu == "propsList"}
-                                            <GetMaterialProps
-                                                {secret}
-                                                mat_id={row.Id}
-                                            />
+                                            <GetMaterialProps mat_id={row.Id} />
                                         {/if}
                                         {#if selectedMenu == "records"}
-                                            <RecordsManager
-                                                mat_id={row.Id}
-                                                {secret}
-                                            />
+                                            <RecordsManager mat_id={row.Id} />
                                         {/if}
                                     </SubmenuSwitch>
                                 </td>
                             </tr>
                         {/if}
                     {/each}
-                    <AddMaterial {secret} />
+                    <AddMaterial />
                 </tbody>
             </table>
         </div>

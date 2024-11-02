@@ -4,10 +4,7 @@
     import { doFetch } from "../lib/getData";
     import * as Sentry from '@sentry/svelte';
 
-    let secret: string;
-    token.subscribe((val) => {
-        secret = val;
-    });
+
     let date: any;
     let type: string = "Мировой рынок металлургического сырья";
     let downloading = false;
@@ -58,7 +55,6 @@
             const resp = (await doFetch(
                 payload,
                 "/getShortReport",
-                secret,
                 true,
             )) as Response;
             if (typeof resp !== "object") {

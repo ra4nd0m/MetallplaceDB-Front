@@ -2,11 +2,10 @@
     import { onMount } from "svelte";
     import { doFetch, type matProp } from "../lib/getData";
     let material_props_list: string | matProp[];
-    export let secret: string;
     export let mat_id: number;
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
-        let result = await doFetch(payload, "/getPropertyList", secret);
+        let result = await doFetch(payload, "/getPropertyList");
         if (
             typeof result === "object" &&
             "list" in result &&
@@ -27,7 +26,6 @@
         let res = await doFetch(
             JSON.stringify(payload),
             "/addPropertyToMaterial",
-            secret,
         );
         if (typeof res === "object" && "succsess" in res) {
             if (!res.succsess) {

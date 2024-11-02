@@ -2,7 +2,6 @@
     import { materials_data } from "../lib/stores";
     import { doFetch, type material } from "../lib/getData";
     import * as yup from "yup";
-    export let secret: string;
     let name: string;
     let source: string;
     let group: string;
@@ -54,8 +53,7 @@
         unit = "";
         newMaterial.Id = await doFetch(
             JSON.stringify(newMaterial),
-            "/addUniqueMaterial",
-            secret,
+            "/addUniqueMaterial"
         ).then((val) => {
             if (typeof val === "object" && "id" in val) {
                 return val.id;

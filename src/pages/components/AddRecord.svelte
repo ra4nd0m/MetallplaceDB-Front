@@ -3,10 +3,8 @@
     import Flatpickr from "svelte-flatpickr";
     import "flatpickr/dist/flatpickr.css";
     import * as Sentry from "@sentry/svelte";
-    import RecordsDisplay from "./RecordsDisplay.svelte";
     import { createEventDispatcher, onMount } from "svelte";
     export let mat_id: number;
-    export let secret: string;
     let created_on: string | any;
     let propValuePairs: propValuePair[] = [];
     let isPropsFetched = false;
@@ -16,7 +14,7 @@
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         propList =
-            (await doFetch(payload, "/getPropertyList", secret).then((val) => {
+            (await doFetch(payload, "/getPropertyList").then((val) => {
                 if (typeof val === "object" && "list" in val) {
                     return val.list as matProp[];
                 }
@@ -58,7 +56,7 @@
         }
     }
     async function addRecord(payload: string) {
-        let resp = await doFetch(payload, "/addValue", secret);
+        let resp = await doFetch(payload, "/addValue");
         if (typeof resp !== "object" || !("success" in resp)) {
             throw new Error("Неизвестная ошибка!");
         }

@@ -5,7 +5,6 @@
     import Flatpickr from "svelte-flatpickr";
     import { date } from "yup";
     export let mat_id: number;
-    export let secret: string;
     export let updateTriggered = false;
     let dates: string;
     let start_date: string;
@@ -28,7 +27,7 @@
     onMount(async () => {
         let payload = JSON.stringify({ material_source_id: `${mat_id}` });
         propList =
-            (await doFetch(payload, "/getPropertyList", secret).then((val) => {
+            (await doFetch(payload, "/getPropertyList").then((val) => {
                 if (typeof val === "object" && "list" in val) {
                     return val.list as matProp[];
                 }
@@ -81,7 +80,6 @@
         dataValues = (await doFetch(
             JSON.stringify(payload),
             "/backend/materialValue/getValuesForPropsListPeriod",
-            secret,
             false,
             true,
         ).then((val) => {
@@ -131,7 +129,6 @@
                     await doFetch(
                         JSON.stringify(payload),
                         "/backend/materialValue/deleteValue",
-                        secret,
                         true,
                         true,
                     );
