@@ -3,7 +3,6 @@
     import { doFetch } from "../lib/getData";
     import type { matProp } from "../lib/getData";
     import Flatpickr from "svelte-flatpickr";
-    import { date } from "yup";
     export let mat_id: number;
     export let updateTriggered = false;
     let dates: string;
@@ -20,6 +19,7 @@
         value3: false,
         value4: false,
         value5: false,
+        value6: false,
         valueAvg: false,
     };
 
@@ -102,6 +102,7 @@
             value3: false,
             value4: false,
             value5: false,
+            value6: false,
             valueAvg: isAvgChecked,
         };
         dataValues.forEach((item) => {
@@ -110,6 +111,7 @@
             if (item.value3) columnsToShow.value3 = true;
             if (item.value4) columnsToShow.value4 = true;
             if (item.value5) columnsToShow.value5 = true;
+            if (item.value6) columnsToShow.value6 = true;
         });
     }
 
@@ -122,7 +124,7 @@
             for (const prop of propsUsed) {
                 if (prop !== -1) {
                     let payload = {
-                        uid: mat_id,
+                        matId: mat_id,
                         propertyId: prop,
                         createdOn: date,
                     };
@@ -132,6 +134,7 @@
                         true,
                         true,
                     );
+                    updateTriggered = true;
                 } else {
                     alert(
                         `Среднее значение не записано в базу и удалить его не выйдет\nЧтобы изменить его, измените средние занчения за месяц`,
@@ -161,11 +164,11 @@
             dates.length !== 0 &&
             dates.indexOf("to") !== -1
         ) {
-            console.log("trg", " ", dates," ",updateTriggered);
+            console.log("trg", " ", dates, " ", updateTriggered);
             getAllRecords();
             updateTriggered = false;
-        } else{
-            updateTriggered =false;
+        } else {
+            updateTriggered = false;
         }
     }
     interface valuesForDateRange {
@@ -176,6 +179,7 @@
         value3?: string;
         value4?: string;
         value5?: string;
+        value6?: string;
         valueAvg?: string;
     }
 </script>
@@ -276,6 +280,9 @@
                             {#if columnsToShow.value5}<td
                                     >{item.value5 ?? ""}</td
                                 >{/if}
+                            {#if columnsToShow.value6}
+                                <td>{item.value6 ?? ""}</td>
+                            {/if}
                             {#if columnsToShow.valueAvg}<td
                                     >{item.valueAvg ?? ""}</td
                                 >{/if}
