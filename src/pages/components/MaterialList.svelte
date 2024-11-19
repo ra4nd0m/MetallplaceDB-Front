@@ -3,9 +3,7 @@
     import { token, materials_data } from "../lib/stores";
     import GetMaterialProps from "./GetMaterialProps.svelte";
     import AddMaterial from "./AddMaterial.svelte";
-    import AddRecord from "./AddRecord.svelte";
     import SubmenuSwitch from "./SubmenuSwitch.svelte";
-    import RecordsDisplay from "./RecordsDisplay.svelte";
     import RecordsManager from "./RecordsManager.svelte";
 
     let tableData: dataTableObjectExtended[];
